@@ -43,8 +43,8 @@ IncludeCategories:
     # range-v3
     -   Regex:      '<range/v3/.+>'
         Priority:   4
-    # jegp
-    -   Regex:      '<jegp/.+>'
+    # tmxpp
+    -   Regex:      '<tmxpp/.+>'
         Priority:   6
     # Local header
     -   Regex:      '".+"'
