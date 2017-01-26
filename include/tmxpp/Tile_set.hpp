@@ -39,6 +39,32 @@ struct Tile_set {
     Tiles tiles;
 };
 
+inline bool
+operator==(const Tile_set::Tile& l, const Tile_set::Tile& r) noexcept
+{
+    return l.id == r.id && l.properties == r.properties &&
+           // l.collision_shape == r.collision_shape &&
+           l.animation == r.animation;
+}
+inline bool
+operator!=(const Tile_set::Tile& l, const Tile_set::Tile& r) noexcept
+{
+    return !(l == r);
+}
+
+inline bool operator==(const Tile_set& l, const Tile_set& r) noexcept
+{
+    return l.first_gid == r.first_gid && l.tsx == r.tsx && l.name == r.name &&
+           l.tile_size == r.tile_size && l.spacing == r.spacing &&
+           l.margin == r.margin && l.size == r.size &&
+           l.tile_offset == r.tile_offset && l.properties == r.properties &&
+           l.image == r.image && l.tiles == r.tiles;
+}
+inline bool operator!=(const Tile_set& l, const Tile_set& r) noexcept
+{
+    return !(l == r);
+}
+
 } // namespace tmxpp
 
 #endif // TMXPP_TILE_SET_HPP
