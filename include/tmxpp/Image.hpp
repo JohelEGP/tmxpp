@@ -11,7 +11,7 @@ namespace tmxpp {
 struct Image {
     File source;
     std::optional<Color> transparent;
-    std::optional<Size> size;
+    std::optional<pxSize> size;
 };
 
 inline bool operator==(const Image& l, const Image& r) noexcept
