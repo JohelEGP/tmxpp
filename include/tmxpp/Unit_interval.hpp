@@ -2,7 +2,6 @@
 #define TMXPP_UNIT_INTERVAL_HPP
 
 #include <boost/hana/integral_constant.hpp>
-#include <jegp/Literal_constant.hpp>
 #include <type_safe/bounded_type.hpp>
 #include <type_safe/constrained_type.hpp>
 
@@ -10,8 +9,7 @@ namespace tmxpp {
 
 using Unit_interval = type_safe::constrained_type<
     double, type_safe::constraints::closed_interval<
-                double, jegp::Literal_constant<double, boost::hana::int_<0>>,
-                jegp::Literal_constant<double, boost::hana::int_<1>>>>;
+                int, boost::hana::int_<0>, boost::hana::int_<1>>>;
 
 } // namespace tmxpp
 
