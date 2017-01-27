@@ -7,8 +7,8 @@
 namespace tmxpp {
 
 struct Flipped_gid {
-    Flip flip{};
-    Tile_id gid{};
+    Flip flip;
+    Tile_id gid;
 };
 
 constexpr bool ok(Flipped_gid f) noexcept
