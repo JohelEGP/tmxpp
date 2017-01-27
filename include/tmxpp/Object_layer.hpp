@@ -21,7 +21,8 @@ struct Object_layer : Layer {
 
 inline bool operator==(const Object_layer& l, const Object_layer& r) noexcept
 {
-    return l.color == r.color && l.draw_order == r.draw_order &&
+    return static_cast<const Layer&>(l) == static_cast<const Layer&>(r) &&
+           l.color == r.color && l.draw_order == r.draw_order &&
            l.objects == r.objects;
 }
 
