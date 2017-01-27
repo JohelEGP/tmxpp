@@ -60,32 +60,36 @@ constexpr bool operator!=(Object::Ellipse l, Object::Ellipse r) noexcept
     return !(l == r);
 }
 
-bool operator==(const Object::Polygon& l, const Object::Polygon& r) noexcept
+inline bool
+operator==(const Object::Polygon& l, const Object::Polygon& r) noexcept
 {
     return l.points == r.points;
 }
-bool operator!=(const Object::Polygon& l, const Object::Polygon& r) noexcept
+inline bool
+operator!=(const Object::Polygon& l, const Object::Polygon& r) noexcept
 {
     return !(l == r);
 }
 
-bool operator==(const Object::Polyline& l, const Object::Polyline& r) noexcept
+inline bool
+operator==(const Object::Polyline& l, const Object::Polyline& r) noexcept
 {
     return l.points == r.points;
 }
-bool operator!=(const Object::Polyline& l, const Object::Polyline& r) noexcept
+inline bool
+operator!=(const Object::Polyline& l, const Object::Polyline& r) noexcept
 {
     return !(l == r);
 }
 
-bool operator==(const Object& l, const Object& r) noexcept
+inline bool operator==(const Object& l, const Object& r) noexcept
 {
     return l.uid == r.uid && l.name == r.name && l.type == r.type &&
            l.position == r.position && l.shape == r.shape &&
            l.rotation == r.rotation && l.gid == r.gid &&
            l.visible == r.visible && l.properties == r.properties;
 }
-bool operator!=(const Object& l, const Object& r) noexcept
+inline bool operator!=(const Object& l, const Object& r) noexcept
 {
     return !(l == r);
 }
