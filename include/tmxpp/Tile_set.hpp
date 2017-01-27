@@ -1,13 +1,13 @@
 #ifndef TMXPP_TILE_SET_HPP
 #define TMXPP_TILE_SET_HPP
 
-// #include <optional>
+#include <optional>
 #include <string>
 #include <vector>
 #include <tmxpp/Animation.hpp>
 #include <tmxpp/File.hpp>
 #include <tmxpp/Image.hpp>
-// #include <tmxpp/Object_layer.hpp>
+#include <tmxpp/Object_layer.hpp>
 #include <tmxpp/Offset.hpp>
 #include <tmxpp/Pixel.hpp>
 #include <tmxpp/Properties.hpp>
@@ -20,7 +20,7 @@ struct Tile_set {
     struct Tile {
         Tile_id id;
         Properties properties;
-        // std::optional<Object_layer> collision_shape;
+        std::optional<Object_layer> collision_shape;
         Animation animation;
     };
 
@@ -43,8 +43,7 @@ inline bool
 operator==(const Tile_set::Tile& l, const Tile_set::Tile& r) noexcept
 {
     return l.id == r.id && l.properties == r.properties &&
-           // l.collision_shape == r.collision_shape &&
-           l.animation == r.animation;
+           l.collision_shape == r.collision_shape && l.animation == r.animation;
 }
 inline bool
 operator!=(const Tile_set::Tile& l, const Tile_set::Tile& r) noexcept

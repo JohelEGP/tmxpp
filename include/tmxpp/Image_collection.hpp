@@ -1,13 +1,13 @@
 #ifndef TMXPP_IMAGE_COLLECTION_HPP
 #define TMXPP_IMAGE_COLLECTION_HPP
 
-// #include <optional>
+#include <optional>
 #include <string>
 #include <vector>
 #include <tmxpp/Animation.hpp>
 #include <tmxpp/File.hpp>
 #include <tmxpp/Image.hpp>
-// #include <tmxpp/Object_layer.hpp>
+#include <tmxpp/Object_layer.hpp>
 #include <tmxpp/Offset.hpp>
 #include <tmxpp/Properties.hpp>
 #include <tmxpp/Size.hpp>
@@ -20,7 +20,7 @@ struct Image_collection {
         Tile_id id;
         Properties properties;
         Image image;
-        // std::optional<Object_layer> collision_shape;
+        std::optional<Object_layer> collision_shape;
         Animation animation;
     };
 
@@ -41,8 +41,7 @@ inline bool operator==(
     const Image_collection::Tile& l, const Image_collection::Tile& r) noexcept
 {
     return l.id == r.id && l.properties == r.properties && l.image == r.image &&
-           // l.collision_shape == r.collision_shape &&
-           l.animation == r.animation;
+           l.collision_shape == r.collision_shape && l.animation == r.animation;
 }
 inline bool operator!=(
     const Image_collection::Tile& l, const Image_collection::Tile& r) noexcept
