@@ -27,5 +27,7 @@
 #include <tmxpp/Tile_set.hpp>
 #include <tmxpp/Unique_id.hpp>
 #include <tmxpp/Unit_interval.hpp>
+#include <tmxpp/read.hpp>
+#include <tmxpp/write.hpp>
 
 #endif // TMXPP_HPP
