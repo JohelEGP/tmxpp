@@ -6,15 +6,15 @@
 namespace tmxpp {
 
 struct Offset {
-    using Dimension = Pixel;
+    using Coordinate = Pixel;
 
-    Dimension w;
-    Dimension h;
+    Coordinate x;
+    Coordinate y;
 };
 
 constexpr bool operator==(Offset l, Offset r) noexcept
 {
-    return l.w == r.w && l.h == r.h;
+    return l.x == r.x && l.y == r.y;
 }
 
 constexpr bool operator!=(Offset l, Offset r) noexcept
