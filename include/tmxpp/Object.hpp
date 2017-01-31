@@ -31,13 +31,13 @@ struct Object {
 
     using Shape = std::variant<Rectangle, Ellipse, Polygon, Polyline>;
 
-    Unique_id uid;
+    Unique_id unique_id;
     std::string name;
     std::string type;
     Point position;
     Shape shape;
-    Degrees rotation;
-    Tile_id gid;
+    Degrees clockwise_rotation;
+    Tile_id global_id;
     bool visible;
     Properties properties;
 };
@@ -84,10 +84,11 @@ operator!=(const Object::Polyline& l, const Object::Polyline& r) noexcept
 
 inline bool operator==(const Object& l, const Object& r) noexcept
 {
-    return l.uid == r.uid && l.name == r.name && l.type == r.type &&
+    return l.unique_id == r.unique_id && l.name == r.name && l.type == r.type &&
            l.position == r.position && l.shape == r.shape &&
-           l.rotation == r.rotation && l.gid == r.gid &&
-           l.visible == r.visible && l.properties == r.properties;
+           l.clockwise_rotation == r.clockwise_rotation &&
+           l.global_id == r.global_id && l.visible == r.visible &&
+           l.properties == r.properties;
 }
 inline bool operator!=(const Object& l, const Object& r) noexcept
 {

@@ -52,10 +52,10 @@ struct Map {
     std::string version;
     Orientation orientation;
     Render_order render_order;
-    iSize size;
-    pxSize tile_size;
+    iSize size; // In tiles.
+    pxSize general_tile_size;
     std::optional<Color> background;
-    Unique_id next_uid;
+    Unique_id next_unique_id;
     Properties properties;
     Tile_sets tile_sets;
     Layers layers;
@@ -102,9 +102,11 @@ inline bool operator==(const Map& l, const Map& r) noexcept
 {
     return l.version == r.version && l.orientation == r.orientation &&
            l.render_order == r.render_order && l.size == r.size &&
-           l.tile_size == r.tile_size && l.background == r.background &&
-           l.next_uid == r.next_uid && l.properties == r.properties &&
-           l.tile_sets == r.tile_sets && l.layers == r.layers;
+           l.general_tile_size == r.general_tile_size &&
+           l.background == r.background &&
+           l.next_unique_id == r.next_unique_id &&
+           l.properties == r.properties && l.tile_sets == r.tile_sets &&
+           l.layers == r.layers;
 }
 inline bool operator!=(const Map& l, const Map& r) noexcept
 {

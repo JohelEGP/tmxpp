@@ -2,7 +2,7 @@
 #define TMXPP_DATA_HPP
 
 #include <vector>
-#include <tmxpp/Flipped_gid.hpp>
+#include <tmxpp/Flipped_global_id.hpp>
 
 namespace tmxpp {
 
@@ -10,17 +10,17 @@ struct Data {
     enum class Encoding : unsigned char { csv, base64 };
     enum class Compression : unsigned char { none, zlib };
 
-    using Flipped_gids = std::vector<Flipped_gid>;
+    using Flipped_global_ids = std::vector<Flipped_global_id>;
 
     Encoding encoding;
     Compression compression;
-    Flipped_gids flipped_gids;
+    Flipped_global_ids flipped_global_ids;
 };
 
 inline bool operator==(const Data& l, const Data& r) noexcept
 {
     return l.encoding == r.encoding && l.compression == r.compression &&
-           l.flipped_gids == r.flipped_gids;
+           l.flipped_global_ids == r.flipped_global_ids;
 }
 
 inline bool operator!=(const Data& l, const Data& r) noexcept

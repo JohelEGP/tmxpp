@@ -18,7 +18,7 @@ namespace tmxpp {
 
 struct Tile_set {
     struct Tile {
-        Tile_id id;
+        Tile_id local_id;
         Properties properties;
         std::optional<Object_layer> collision_shape;
         Animation animation;
@@ -26,13 +26,13 @@ struct Tile_set {
 
     using Tiles = std::vector<Tile>;
 
-    Tile_id first_gid;
+    Tile_id first_global_id;
     File tsx;
     std::string name;
     pxSize tile_size;
     Pixel spacing;
     Pixel margin;
-    iSize size;
+    iSize size; // In tiles.
     Offset tile_offset;
     Properties properties;
     Image image;
@@ -42,7 +42,7 @@ struct Tile_set {
 inline bool
 operator==(const Tile_set::Tile& l, const Tile_set::Tile& r) noexcept
 {
-    return l.id == r.id && l.properties == r.properties &&
+    return l.local_id == r.local_id && l.properties == r.properties &&
            l.collision_shape == r.collision_shape && l.animation == r.animation;
 }
 inline bool
@@ -53,9 +53,9 @@ operator!=(const Tile_set::Tile& l, const Tile_set::Tile& r) noexcept
 
 inline bool operator==(const Tile_set& l, const Tile_set& r) noexcept
 {
-    return l.first_gid == r.first_gid && l.tsx == r.tsx && l.name == r.name &&
-           l.tile_size == r.tile_size && l.spacing == r.spacing &&
-           l.margin == r.margin && l.size == r.size &&
+    return l.first_global_id == r.first_global_id && l.tsx == r.tsx &&
+           l.name == r.name && l.tile_size == r.tile_size &&
+           l.spacing == r.spacing && l.margin == r.margin && l.size == r.size &&
            l.tile_offset == r.tile_offset && l.properties == r.properties &&
            l.image == r.image && l.tiles == r.tiles;
 }

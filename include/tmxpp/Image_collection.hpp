@@ -17,7 +17,7 @@ namespace tmxpp {
 
 struct Image_collection {
     struct Tile {
-        Tile_id id;
+        Tile_id local_id;
         Properties properties;
         Image image;
         std::optional<Object_layer> collision_shape;
@@ -26,7 +26,7 @@ struct Image_collection {
 
     using Tiles = std::vector<Tile>;
 
-    Tile_id first_gid;
+    Tile_id first_global_id;
     File tsx;
     std::string name;
     pxSize max_tile_size;
@@ -40,8 +40,9 @@ struct Image_collection {
 inline bool operator==(
     const Image_collection::Tile& l, const Image_collection::Tile& r) noexcept
 {
-    return l.id == r.id && l.properties == r.properties && l.image == r.image &&
-           l.collision_shape == r.collision_shape && l.animation == r.animation;
+    return l.local_id == r.local_id && l.properties == r.properties &&
+           l.image == r.image && l.collision_shape == r.collision_shape &&
+           l.animation == r.animation;
 }
 inline bool operator!=(
     const Image_collection::Tile& l, const Image_collection::Tile& r) noexcept
@@ -52,10 +53,11 @@ inline bool operator!=(
 inline bool
 operator==(const Image_collection& l, const Image_collection& r) noexcept
 {
-    return l.first_gid == r.first_gid && l.tsx == r.tsx && l.name == r.name &&
-           l.max_tile_size == r.max_tile_size && l.tile_count == r.tile_count &&
-           l.columns == r.columns && l.tile_offset == r.tile_offset &&
-           l.properties == r.properties && l.tiles == r.tiles;
+    return l.first_global_id == r.first_global_id && l.tsx == r.tsx &&
+           l.name == r.name && l.max_tile_size == r.max_tile_size &&
+           l.tile_count == r.tile_count && l.columns == r.columns &&
+           l.tile_offset == r.tile_offset && l.properties == r.properties &&
+           l.tiles == r.tiles;
 }
 inline bool
 operator!=(const Image_collection& l, const Image_collection& r) noexcept

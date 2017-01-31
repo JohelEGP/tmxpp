@@ -5,25 +5,25 @@
 
 namespace tmxpp {
 
-template <class T>
+template <class Number>
 struct Size {
-    using Dimension = T;
+    using Dimension = Number;
 
-    Dimension w;
-    Dimension h;
+    Dimension width;
+    Dimension height;
 };
 
 using pxSize = Size<Pixel>;
 using iSize  = Size<int>;
 
-template <class T>
-constexpr bool operator==(Size<T> l, Size<T> r) noexcept
+template <class N>
+constexpr bool operator==(Size<N> l, Size<N> r) noexcept
 {
-    return l.w == r.w && l.h == r.h;
+    return l.width == r.width && l.height == r.height;
 }
 
-template <class T>
-constexpr bool operator!=(Size<T> l, Size<T> r) noexcept
+template <class N>
+constexpr bool operator!=(Size<N> l, Size<N> r) noexcept
 {
     return !(l == r);
 }

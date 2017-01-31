@@ -7,13 +7,13 @@
 namespace tmxpp {
 
 struct Frame {
-    Tile_id id;
+    Tile_id local_id;
     std::chrono::milliseconds duration;
 };
 
 constexpr bool operator==(Frame l, Frame r) noexcept
 {
-    return l.id == r.id && l.duration == r.duration;
+    return l.local_id == r.local_id && l.duration == r.duration;
 }
 
 constexpr bool operator!=(Frame l, Frame r) noexcept
