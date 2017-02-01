@@ -16,16 +16,6 @@ private:
     std::string what_;
 };
 
-class Invalid_attribute : public Exception {
-public:
-    using Exception::Exception;
-};
-
-class Invalid_element : public Exception {
-public:
-    using Exception::Exception;
-};
-
 } // namespace tmxpp
 
 #endif // TMXPP_EXCEPTIONS_HPP

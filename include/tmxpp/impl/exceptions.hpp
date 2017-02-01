@@ -7,7 +7,7 @@
 
 namespace tmxpp::impl {
 
-class Invalid_attribute : public tmxpp::Invalid_attribute {
+class Invalid_attribute : public Exception {
 public:
     using Name  = Xml::Attribute::Name;
     using Value = Xml::Attribute::Value;
@@ -16,7 +16,7 @@ public:
     explicit Invalid_attribute(Name, Value);
 };
 
-class Invalid_element : public tmxpp::Invalid_element {
+class Invalid_element : public Exception {
 public:
     using Name  = Xml::Element::Name;
     using Value = Xml::Element::Value;
