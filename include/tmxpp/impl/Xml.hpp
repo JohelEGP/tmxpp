@@ -70,7 +70,7 @@ public:
 
         // Returns: A child `Element` with the given `name`.
         // Throws: `Invalid_attribute` if there is no such child `Element`.
-        Element child(Element::Name name) const;
+        Element child(Name name) const;
 
         // Returns: An `Attribute` with the given `name`, if any.
         std::optional<Attribute> optional_attribute(Attribute::Name name) const
