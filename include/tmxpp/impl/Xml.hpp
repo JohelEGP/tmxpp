@@ -11,6 +11,7 @@
 #include <rapidxml_iterators.hpp>
 #include <rapidxml_print.hpp>
 #include <rapidxml_utils.hpp>
+#include <tmxpp/exceptions.hpp>
 #include <tmxpp/impl/Strong_typedef.hpp>
 
 namespace tmxpp::impl {
@@ -153,14 +154,21 @@ public:
     };
 
     // Effects: Loads and parses the `Xml` `path`.
+    // Throws: `Exception` in case of parsing error or lack of root element.
     explicit Xml(const std::string& path) : xml{path.c_str()}
     {
         using namespace rapidxml;
 
-        doc.parse<parse_fastest | parse_trim_whitespace>(
-            std::as_const(xml)->data());
+        try {
+            doc.parse<parse_fastest | parse_trim_whitespace>(
+                std::as_const(xml)->data());
+        }
+        catch (const rapidxml::parse_error& e) {
+            throw Exception{e.what()};
+        }
 
-        Ensures(root().elem != nullptr);
+        if (root().elem == nullptr)
+            throw Exception{path + " has no root element"};
     }
 
     // Effects: Creates an `Xml` with the root `Element` `name`.
