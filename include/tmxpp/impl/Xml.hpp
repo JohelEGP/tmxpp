@@ -64,25 +64,13 @@ public:
             return Value{elem->value_ref()};
         }
 
-        // Requires: There is an `Attribute` with the given `name`.
         // Returns: An `Attribute` with the given `name`.
-        Attribute attribute(Attribute::Name name) const
-        {
-            auto attr{elem->first_attribute(get(name))};
+        // Throws: `Invalid_attribute` if there is no such `Attribute`.
+        Attribute attribute(Attribute::Name name) const;
 
-            Ensures(attr);
-            return Attribute{attr};
-        }
-
-        // Requires: There is a child `Element` with the given `name`.
         // Returns: A child `Element` with the given `name`.
-        Element child(Element::Name name) const
-        {
-            auto child{elem->first_node(get(name))};
-
-            Ensures(child);
-            return Element{child};
-        }
+        // Throws: `Invalid_attribute` if there is no such child `Element`.
+        Element child(Element::Name name) const;
 
         // Returns: An `Attribute` with the given `name`, if any.
         std::optional<Attribute> optional_attribute(Attribute::Name name) const
