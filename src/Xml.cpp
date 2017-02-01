@@ -1,5 +1,5 @@
-#include <tmxpp/exceptions.hpp>
 #include <tmxpp/impl/Xml.hpp>
+#include <tmxpp/impl/exceptions.hpp>
 
 namespace tmxpp::impl {
 
