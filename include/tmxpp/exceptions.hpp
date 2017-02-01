@@ -1,18 +1,29 @@
 #ifndef TMXPP_EXCEPTIONS_HPP
 #define TMXPP_EXCEPTIONS_HPP
 
-#include <stdexcept>
+#include <exception>
+#include <string>
 
 namespace tmxpp {
 
-class Invalid_attribute : public std::invalid_argument {
+class Exception : public std::exception {
 public:
-    using std::invalid_argument::invalid_argument;
+    explicit Exception(std::string what) noexcept;
+
+    const char* what() const noexcept override;
+
+private:
+    std::string what_;
 };
 
-class Invalid_element : public std::invalid_argument {
+class Invalid_attribute : public Exception {
 public:
-    using std::invalid_argument::invalid_argument;
+    using Exception::Exception;
+};
+
+class Invalid_element : public Exception {
+public:
+    using Exception::Exception;
 };
 
 } // namespace tmxpp
