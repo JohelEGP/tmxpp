@@ -16,6 +16,8 @@
 namespace tmxpp::impl {
 
 // Represents an xml document.
+// All arguments of type `Attribute::Name` and `Element::Name` are required to
+// be from the header tmx_info.hpp (`constexpr` and non-empty).
 class Xml {
 public:
     class Element;
@@ -111,7 +113,6 @@ public:
             return node_range(elem, get(name));
         }
 
-        // Requires: `name` outlives `*this`' owning `Xml`.
         // Effects: Adds an `Attribute` with the given `name` and `value`.
         void add(Attribute::Name name, Attribute::Value value) const
         {
@@ -125,7 +126,6 @@ public:
                 doc->allocate_attribute(get(name), get(value)));
         }
 
-        // Requires: `name` outlives `*this`' owning `Xml`.
         // Effects: Adds a child `Element` with the given `name`.
         // Returns: The added `Element`.
         Element add(Name name) const
@@ -136,7 +136,6 @@ public:
             return Element{elem->last_node()};
         }
 
-        // Requires: `name` outlives `*this`' owning `Xml`.
         // Effects: Adds a child `Element` with the given `name` and `value`.
         // Returns: The added `Element`.
         Element add(Name name, Value value) const
