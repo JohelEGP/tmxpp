@@ -1,7 +1,6 @@
 #ifndef TMXPP_IMPL_EXCEPTIONS_HPP
 #define TMXPP_IMPL_EXCEPTIONS_HPP
 
-#include <stdexcept>
 #include <tmxpp/exceptions.hpp>
 #include <tmxpp/impl/Xml.hpp>
 
