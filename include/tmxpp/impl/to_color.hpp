@@ -7,7 +7,9 @@
 #include <sstream>
 #include <string>
 #include <string_view>
+#include <tmxpp/Color.hpp>
 #include <tmxpp/exceptions.hpp>
+#include <tmxpp/impl/Xml.hpp>
 
 namespace tmxpp::impl {
 
