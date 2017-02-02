@@ -45,7 +45,7 @@ Channels to_channels(std::string_view color)
     ss >> num;
     if (!ss || !ss.eof())
         throw Exception{"Hexadecimal " + std::string{hex_substr(color)} +
-                        " could not be converted to Arithmetic."};
+                        " could not be converted to Channels."};
     return num;
 }
 
