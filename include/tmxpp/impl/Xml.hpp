@@ -160,8 +160,7 @@ public:
         using namespace rapidxml;
 
         try {
-            doc.parse<parse_fastest | parse_trim_whitespace>(
-                std::as_const(xml)->data());
+            doc.parse<parse_fastest>(std::as_const(xml)->data());
         }
         catch (const rapidxml::parse_error& e) {
             throw Exception{e.what()};
