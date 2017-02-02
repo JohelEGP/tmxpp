@@ -31,7 +31,7 @@ namespace map {
 
 std::string read_version(Xml::Element map)
 {
-    return std::string{get(value(map, tmx_info::map_version))};
+    return std::string{get(value(map, map_version))};
 }
 
 Map::Staggered::Axis read_axis(Xml::Element map)
