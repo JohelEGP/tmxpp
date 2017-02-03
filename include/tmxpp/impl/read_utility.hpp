@@ -5,6 +5,10 @@
 #include <string>
 #include <string_view>
 #include <boost/lexical_cast.hpp>
+#include <range/v3/begin_end.hpp>
+#include <range/v3/distance.hpp>
+#include <range/v3/view/bounded.hpp>
+#include <range/v3/view/transform.hpp>
 #include <type_safe/strong_typedef.hpp>
 #include <tmxpp/Pixel.hpp>
 #include <tmxpp/Unique_id.hpp>
@@ -55,6 +59,23 @@ template <class Arithmetic>
 Arithmetic from_string(Xml::Attribute::Value value)
 {
     return from_string<Arithmetic>(get(value));
+}
+
+// Requires: `ReservableContainer` is a STL `SequenceContainer` with a `reserve`
+//           member. `Range` is a range-v3 range. `Function` takes an element of
+//           the `range` and returns an element of the `ReservableContainer`.
+// Returns: The `range` `transform`ed into the `ReservableContainer`.
+template <class ReservableContainer, class Range, class Function>
+ReservableContainer transform(Range range, Function transform)
+{
+    ReservableContainer container;
+    container.reserve(ranges::distance(range));
+
+    auto elements{range | ranges::view::transform(transform) |
+                  ranges::view::bounded};
+
+    container.assign(ranges::begin(elements), ranges::end(elements));
+    return container;
 }
 
 } // namespace tmxpp::impl

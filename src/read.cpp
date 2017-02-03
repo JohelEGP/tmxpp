@@ -27,6 +27,58 @@ pxSize read_tile_size(Xml::Element element)
         from_string<pxSize::Dimension>(value(element, tile_size_height))};
 }
 
+namespace properties {
+
+Property::Value read_value(Xml::Element property)
+{
+    auto value{impl::value(property, property_value)};
+    auto alternative{impl::value(property, property_alternative)};
+
+    if (alternative == property_alternative_string)
+        return std::string{get(value)};
+    if (alternative == property_alternative_int)
+        return from_string<int>(value);
+    if (alternative == property_alternative_double)
+        return from_string<double>(value);
+    if (alternative == property_alternative_bool) {
+        if (value == property_value_true)
+            return true;
+        if (value == property_value_false)
+            return false;
+        throw Exception{"Bad property bool value: " + std::string{get(value)}};
+    }
+    if (alternative == property_alternative_color)
+        return to_color(value);
+    if (alternative == property_alternative_file)
+        return File{get(value)};
+
+    throw Invalid_attribute{property_alternative, alternative};
+}
+
+std::string read_name(Xml::Element property)
+{
+    return std::string{get(value(property, property_name))};
+}
+
+Property read_property(Xml::Element property)
+{
+    return {read_name(property), read_value(property)};
+}
+
+Properties read_properties(Xml::Element element)
+{
+    auto properties{element.optional_child(tmx_info::properties)};
+
+    if (!properties)
+        return {};
+
+    return transform<Properties>(properties->children(property), read_property);
+}
+
+} // namespace properties
+
+using properties::read_properties;
+
 namespace map {
 
 std::string read_version(Xml::Element map)
@@ -110,10 +162,10 @@ Unique_id read_next_unique_id(Xml::Element map)
 
 Map read_map(Xml::Element map)
 {
-    return {read_version(map),       read_orientation(map),
-            read_render_order(map),  read_isize(map),
-            read_tile_size(map),     read_background(map),
-            read_next_unique_id(map)};
+    return {read_version(map),        read_orientation(map),
+            read_render_order(map),   read_isize(map),
+            read_tile_size(map),      read_background(map),
+            read_next_unique_id(map), read_properties(map)};
 }
 
 } // namespace map
