@@ -7,6 +7,10 @@
 #include <string_view>
 #include <utility>
 #include <gsl/gsl_assert>
+#include <range/v3/view/filter.hpp>
+#include <range/v3/view/indirect.hpp>
+#include <range/v3/view/iota.hpp>
+#include <range/v3/view/transform.hpp>
 #include <rapidxml.hpp>
 #include <rapidxml_iterators.hpp>
 #include <rapidxml_print.hpp>
@@ -90,16 +94,33 @@ public:
             return {};
         }
 
-        // Returns: A range of the `Attribute`s filtered by `name`.
+        // Returns: A range-v3 view of the `Attribute`s filtered by `name`.
         auto attributes(Attribute::Name name) const noexcept
         {
-            return attribute_range(elem, get(name));
+            return ranges::view::iota(
+                       rapidxml::attribute_iterator<>{elem},
+                       rapidxml::attribute_iterator<>{}) |
+                   ranges::view::indirect |
+                   ranges::view::filter([name](auto&& attribute) {
+                       return attribute.name_ref() == get(name);
+                   }) |
+                   ranges::view::transform(
+                       [](auto&& attribute) { return Attribute{&attribute}; });
         }
 
-        // Returns: A range of the children `Element`s filtered by `name`.
+        // Returns: A range-v3 view of the children `Element`s filtered by
+        //          `name`.
         auto children(Name name) const noexcept
         {
-            return node_range(elem, get(name));
+            return ranges::view::iota(
+                       rapidxml::node_iterator<>{elem},
+                       rapidxml::node_iterator<>{}) |
+                   ranges::view::indirect |
+                   ranges::view::filter([name](auto&& child) {
+                       return child.name_ref() == get(name);
+                   }) |
+                   ranges::view::transform(
+                       [](auto&& child) { return Element{&child}; });
         }
 
         // Effects: Adds an `Attribute` with the given `name` and `value`.
