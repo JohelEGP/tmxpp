@@ -57,7 +57,7 @@ constexpr Xml::Attribute::Name tile_set_tile_local_id{"id"sv};
 
 constexpr Xml::Element::Name animation{"animation"sv};
 
-constexpr Xml::Element::Name frame{""sv};
+constexpr Xml::Element::Name frame{"frame"sv};
 constexpr Xml::Attribute::Name frame_local_id{"tileid"sv};
 constexpr Xml::Attribute::Name frame_duration{"duration"sv};
 
