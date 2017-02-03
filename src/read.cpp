@@ -95,6 +95,44 @@ Properties read_properties(Xml::Element element)
 
 using properties::read_properties;
 
+namespace image {
+
+File read_source(Xml::Element image)
+{
+    return get(value(image, image_source));
+}
+
+std::optional<Color> read_transparent(Xml::Element image)
+{
+    if (auto color{optional_value(image, image_transparent)})
+        return to_color(*color);
+    return {};
+}
+
+std::optional<pxSize> read_size(Xml::Element image)
+{
+    auto width{optional_value(image, size_width)};
+    auto height{optional_value(image, size_height)};
+
+    if (bool{width} != bool{height})
+        throw Exception{"Expected image with both width and height, or none."};
+
+    if (!width)
+        return {};
+
+    return pxSize{from_string<pxSize::Dimension>(*width),
+                  from_string<pxSize::Dimension>(*height)};
+}
+
+Image read_image(Xml::Element image)
+{
+    return {read_source(image), read_transparent(image), read_size(image)};
+}
+
+} // namespace image
+
+using image::read_image;
+
 namespace tile_set {
 
 Tile_id read_first_global_id(Xml::Element tile_set)
