@@ -5,9 +5,11 @@
 #include <string>
 #include <string_view>
 #include <boost/lexical_cast.hpp>
+#include <range/v3/algorithm/any_of.hpp>
 #include <range/v3/begin_end.hpp>
 #include <range/v3/distance.hpp>
 #include <range/v3/view/bounded.hpp>
+#include <range/v3/view/filter.hpp>
 #include <range/v3/view/transform.hpp>
 #include <type_safe/strong_typedef.hpp>
 #include <tmxpp/Pixel.hpp>
@@ -59,6 +61,16 @@ template <class Arithmetic>
 Arithmetic from_string(Xml::Attribute::Value value)
 {
     return from_string<Arithmetic>(get(value));
+}
+
+// Returns: The range of `element`'s children whose names are in `names`.
+auto filter(
+    Xml::Element element, std::initializer_list<Xml::Element::Name> names)
+{
+    return element.children() | ranges::view::filter([names](auto&& child) {
+               return ranges::any_of(
+                   names, [child](auto name) { return name == child.name(); });
+           });
 }
 
 // Requires: `ReservableContainer` is a STL `SequenceContainer` with a `reserve`
