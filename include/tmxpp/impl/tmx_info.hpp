@@ -41,13 +41,8 @@ constexpr Xml::Attribute::Name tile_set_tsx{"source"sv};
 constexpr Xml::Attribute::Name tile_set_name{"name"sv};
 constexpr Xml::Attribute::Name tile_set_spacing{"spacing"sv};
 constexpr Xml::Attribute::Name tile_set_margin{"margin"sv};
-
-constexpr Xml::Element::Name image_collection{"tileset"sv};
-constexpr Xml::Attribute::Name image_collection_first_global_id{"firstgid"sv};
-constexpr Xml::Attribute::Name image_collection_tsx{"source"sv};
-constexpr Xml::Attribute::Name image_collection_name{"name"sv};
-constexpr Xml::Attribute::Name image_collection_tile_count{"tilecount"sv};
-constexpr Xml::Attribute::Name image_collection_columns{"columns"sv};
+constexpr Xml::Attribute::Name tile_set_tile_count{"tilecount"sv};
+constexpr Xml::Attribute::Name tile_set_columns{"columns"sv};
 
 constexpr Xml::Element::Name tile_offset{"tileoffset"sv};
 constexpr Xml::Attribute::Name tile_offset_x{"x"sv};
@@ -59,9 +54,6 @@ constexpr Xml::Attribute::Name image_transparent{"source"sv};
 
 constexpr Xml::Element::Name tile_set_tile{"tile"sv};
 constexpr Xml::Attribute::Name tile_set_tile_local_id{"id"sv};
-
-constexpr Xml::Element::Name image_collection_tile{"tile"sv};
-constexpr Xml::Attribute::Name image_collection_tile_local_id{"id"sv};
 
 constexpr Xml::Element::Name animation{"animation"sv};
 
