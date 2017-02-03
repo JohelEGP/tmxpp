@@ -196,6 +196,16 @@ int read_columns(Xml::Element tile_set)
     return from_string<int>(value(tile_set, tile_set_columns));
 }
 
+Tile_id read_tile_local_id(Xml::Element tile)
+{
+    return from_string<Tile_id>(value(tile, tile_set_tile_local_id));
+}
+
+std::optional<Object_layer> read_tile_collision_shape(Xml::Element tile)
+{
+    return {};
+}
+
 namespace tile_set {
 
 Pixel read_spacing(Xml::Element tile_set)
@@ -223,6 +233,18 @@ iSize read_size(Xml::Element tile_set)
     return {columns, tile_count / columns};
 }
 
+Tile_set::Tile read_tile(Xml::Element tile)
+{
+    return {read_tile_local_id(tile), read_properties(tile),
+            read_tile_collision_shape(tile), read_animation(tile)};
+}
+
+Tile_set::Tiles read_tiles(Xml::Element tile_set)
+{
+    return transform<Tile_set::Tiles>(
+        tile_set.children(tile_set_tile), read_tile);
+}
+
 Tile_set read_tile_set(Xml::Element tile_set)
 {
     return {read_first_global_id(tile_set),
@@ -231,10 +253,29 @@ Tile_set read_tile_set(Xml::Element tile_set)
             read_tile_size(tile_set),
             read_spacing(tile_set),
             read_margin(tile_set),
-            read_size(tile_set)};
+            read_size(tile_set),
+            read_tile_offset(tile_set),
+            read_properties(tile_set),
+            read_image(tile_set.child(tmx_info::image)),
+            read_tiles(tile_set)};
 }
 
 } // namespace tile_set
+
+namespace image_collection {
+
+Image_collection::Tile read_tile(Xml::Element tile)
+{
+    return {read_tile_local_id(tile), read_properties(tile),
+            read_image(tile.child(tmx_info::image)),
+            read_tile_collision_shape(tile), read_animation(tile)};
+}
+
+Image_collection::Tiles read_tiles(Xml::Element image_collection)
+{
+    return transform<Image_collection::Tiles>(
+        image_collection.children(tile_set_tile), read_tile);
+}
 
 Image_collection read_image_collection(Xml::Element image_collection)
 {
@@ -243,13 +284,18 @@ Image_collection read_image_collection(Xml::Element image_collection)
             read_name(image_collection),
             read_tile_size(image_collection),
             read_tile_count(image_collection),
-            read_columns(image_collection)};
+            read_columns(image_collection),
+            read_tile_offset(image_collection),
+            read_properties(image_collection),
+            read_tiles(image_collection)};
 }
+
+} // namespace image_collection
 
 } // namespace tile_set
 
 using tile_set::tile_set::read_tile_set;
-using tile_set::read_image_collection;
+using tile_set::image_collection::read_image_collection;
 
 namespace map {
 
