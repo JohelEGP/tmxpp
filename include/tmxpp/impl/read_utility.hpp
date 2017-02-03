@@ -13,6 +13,7 @@
 #include <range/v3/view/transform.hpp>
 #include <type_safe/strong_typedef.hpp>
 #include <tmxpp/Pixel.hpp>
+#include <tmxpp/Tile_id.hpp>
 #include <tmxpp/Unique_id.hpp>
 #include <tmxpp/exceptions.hpp>
 #include <tmxpp/impl/Xml.hpp>
@@ -43,6 +44,12 @@ Arithmetic from_string(std::string_view s) try {
 catch (const boost::bad_lexical_cast& e) {
     throw Exception{std::string{s} + " could not be converted to Arithmetic. " +
                     e.what()};
+}
+
+template <>
+Tile_id from_string<Tile_id>(std::string_view s)
+{
+    return Tile_id{from_string<type_safe::underlying_type<Tile_id>>(s)};
 }
 
 template <>
