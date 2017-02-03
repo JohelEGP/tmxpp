@@ -1,6 +1,7 @@
 #ifndef TMXPP_IMPL_READ_UTILITY_HPP
 #define TMXPP_IMPL_READ_UTILITY_HPP
 
+#include <chrono>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -62,6 +63,14 @@ template <>
 Unique_id from_string<Unique_id>(std::string_view s)
 {
     return Unique_id{from_string<type_safe::underlying_type<Unique_id>>(s)};
+}
+
+template <>
+std::chrono::milliseconds
+from_string<std::chrono::milliseconds>(std::string_view s)
+{
+    return std::chrono::milliseconds{
+        from_string<std::chrono::milliseconds::rep>(s)};
 }
 
 template <class Arithmetic>

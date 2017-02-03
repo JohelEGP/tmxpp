@@ -1,3 +1,4 @@
+#include <chrono>
 #include <optional>
 #include <string>
 #include <tmxpp.hpp>
@@ -132,6 +133,37 @@ Image read_image(Xml::Element image)
 } // namespace image
 
 using image::read_image;
+
+namespace animation {
+
+Tile_id read_local_id(Xml::Element frame)
+{
+    return from_string<Tile_id>(value(frame, frame_local_id));
+}
+
+std::chrono::milliseconds read_duration(Xml::Element frame)
+{
+    return from_string<std::chrono::milliseconds>(value(frame, frame_duration));
+}
+
+Frame read_frame(Xml::Element frame)
+{
+    return {read_local_id(frame), read_duration(frame)};
+}
+
+Animation read_animation(Xml::Element element)
+{
+    auto animation{element.optional_child(tmx_info::animation)};
+
+    if (!animation)
+        return {};
+
+    return transform<Animation>(element.children(frame), read_frame);
+}
+
+} // namespace animation
+
+using animation::read_animation;
 
 namespace tile_set {
 
