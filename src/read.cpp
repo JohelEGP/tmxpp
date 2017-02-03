@@ -83,6 +83,92 @@ Properties read_properties(Xml::Element element)
 
 using properties::read_properties;
 
+namespace tile_set {
+
+Tile_id read_first_global_id(Xml::Element tile_set)
+{
+    return from_string<Tile_id>(value(tile_set, tile_set_first_global_id));
+}
+
+File read_tsx(Xml::Element tile_set)
+{
+    if (auto tsx{optional_value(tile_set, tile_set_tsx)})
+        return get(*tsx);
+    return {};
+}
+
+std::string read_name(Xml::Element tile_set)
+{
+    if (auto name{optional_value(tile_set, tile_set_name)})
+        return std::string{get(*name)};
+    return {};
+}
+
+int read_tile_count(Xml::Element tile_set)
+{
+    return from_string<int>(value(tile_set, tile_set_tile_count));
+}
+
+int read_columns(Xml::Element tile_set)
+{
+    return from_string<int>(value(tile_set, tile_set_columns));
+}
+
+namespace tile_set {
+
+Pixel read_spacing(Xml::Element tile_set)
+{
+    if (auto spacing{optional_value(tile_set, tile_set_spacing)})
+        return from_string<Pixel>(*spacing);
+    return {};
+}
+
+Pixel read_margin(Xml::Element tile_set)
+{
+    if (auto margin{optional_value(tile_set, tile_set_margin)})
+        return from_string<Pixel>(*margin);
+    return {};
+}
+
+iSize read_size(Xml::Element tile_set)
+{
+    auto tile_count{read_tile_count(tile_set)};
+    auto columns{read_columns(tile_set)};
+
+    if (columns == 0)
+        throw Exception{"Invalid columns value: 0"};
+
+    return {columns, tile_count / columns};
+}
+
+Tile_set read_tile_set(Xml::Element tile_set)
+{
+    return {read_first_global_id(tile_set),
+            read_tsx(tile_set),
+            read_name(tile_set),
+            read_tile_size(tile_set),
+            read_spacing(tile_set),
+            read_margin(tile_set),
+            read_size(tile_set)};
+}
+
+} // namespace tile_set
+
+Image_collection read_image_collection(Xml::Element image_collection)
+{
+    return {read_first_global_id(image_collection),
+            read_tsx(image_collection),
+            read_name(image_collection),
+            read_tile_size(image_collection),
+            read_tile_count(image_collection),
+            read_columns(image_collection)};
+}
+
+} // namespace tile_set
+
+using tile_set::tile_set::read_tile_set;
+using tile_set::read_image_collection;
+
 namespace map {
 
 std::string read_version(Xml::Element map)
