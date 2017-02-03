@@ -297,6 +297,48 @@ Image_collection read_image_collection(Xml::Element image_collection)
 using tile_set::tile_set::read_tile_set;
 using tile_set::image_collection::read_image_collection;
 
+namespace layer {
+
+std::string read_name(Xml::Element layer)
+{
+    if (auto name{optional_value(layer, layer_name)})
+        return std::string{get(*name)};
+    return {};
+}
+
+Unit_interval read_opacity(Xml::Element layer)
+{
+    if (auto opacity{optional_value(layer, layer_opacity)})
+        return from_string<Unit_interval>(*opacity);
+    return Unit_interval{1};
+}
+
+bool read_visible(Xml::Element layer)
+{
+    if (auto visible{optional_value(layer, layer_visible)})
+        return from_string<bool>(*visible);
+    return true;
+}
+
+Offset read_offset(Xml::Element layer)
+{
+    auto x{optional_value(layer, offset_x)};
+    auto y{optional_value(layer, offset_y)};
+
+    return Offset{x ? from_string<Offset::Coordinate>(*x) : Pixel{0},
+                  y ? from_string<Offset::Coordinate>(*y) : Pixel{0}};
+}
+
+Layer read_layer(Xml::Element layer)
+{
+    return {read_name(layer), read_opacity(layer), read_visible(layer),
+            read_offset(layer), read_properties(layer)};
+}
+
+} // namespace layer
+
+using layer::read_layer;
+
 namespace map {
 
 std::string read_version(Xml::Element map)
