@@ -16,6 +16,7 @@
 #include <tmxpp/Pixel.hpp>
 #include <tmxpp/Tile_id.hpp>
 #include <tmxpp/Unique_id.hpp>
+#include <tmxpp/Unit_interval.hpp>
 #include <tmxpp/exceptions.hpp>
 #include <tmxpp/impl/Xml.hpp>
 
@@ -57,6 +58,12 @@ template <>
 Pixel from_string<Pixel>(std::string_view s)
 {
     return Pixel{from_string<type_safe::underlying_type<Pixel>>(s)};
+}
+
+template <>
+Unit_interval from_string<Unit_interval>(std::string_view s)
+{
+    return Unit_interval{from_string<Unit_interval::value_type>(s)};
 }
 
 template <>
