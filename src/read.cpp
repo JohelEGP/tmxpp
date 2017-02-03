@@ -27,6 +27,18 @@ pxSize read_tile_size(Xml::Element element)
         from_string<pxSize::Dimension>(value(element, tile_size_height))};
 }
 
+Offset read_tile_offset(Xml::Element element)
+{
+    auto tile_offset{element.optional_child(tmx_info::tile_offset)};
+
+    if (!tile_offset)
+        return {};
+
+    return Offset{
+        from_string<Offset::Coordinate>(value(*tile_offset, tile_offset_x)),
+        from_string<Offset::Coordinate>(value(*tile_offset, tile_offset_y))};
+}
+
 namespace properties {
 
 Property::Value read_value(Xml::Element property)
