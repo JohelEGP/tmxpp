@@ -19,7 +19,7 @@ namespace color {
 // Notes: A TMX color has the format "#AARRGGBB" or "#RRGGBB".
 bool is_well_formatted(std::string_view s)
 {
-    static const std::regex format{"#[[:xdigit:]]{2}?[[:xdigit:]]{6}",
+    static const std::regex format{"#([[:xdigit:]]{2})?[[:xdigit:]]{6}",
                                    std::regex::nosubs};
 
     return std::regex_match(s.begin(), s.end(), format);
