@@ -50,7 +50,7 @@ constexpr Xml::Attribute::Name tile_offset_y{"y"sv};
 
 constexpr Xml::Element::Name image{"image"sv};
 constexpr Xml::Attribute::Name image_source{"source"sv};
-constexpr Xml::Attribute::Name image_transparent{"source"sv};
+constexpr Xml::Attribute::Name image_transparent{"trans"sv};
 
 constexpr Xml::Element::Name tile_set_tile{"tile"sv};
 constexpr Xml::Attribute::Name tile_set_tile_local_id{"id"sv};
