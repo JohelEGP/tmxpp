@@ -60,12 +60,16 @@ constexpr bool has_alpha(std::string_view color) noexcept
 
 Color to_color(std::string_view color)
 {
+    constexpr Color::Channel default_alpha{255};
+    constexpr Color default_{default_alpha, 0, 0, 0};
+
+    if (color.empty())
+        return default_;
+
     if (!is_well_formatted(color))
         throw Exception{"Color with bad format: " + std::string{color}};
 
     auto channels{to_channels(color)};
-
-    constexpr Color::Channel default_alpha{255};
 
     return {
         has_alpha(color) ? static_cast<Color::Channel>(channels >> 24 & 0xFF)

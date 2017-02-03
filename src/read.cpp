@@ -32,27 +32,27 @@ namespace properties {
 Property::Value read_value(Xml::Element property)
 {
     auto value{impl::value(property, property_value)};
-    auto alternative{impl::value(property, property_alternative)};
+    auto alternative{optional_value(property, property_alternative)};
 
-    if (alternative == property_alternative_string)
+    if (!alternative || *alternative == property_alternative_string)
         return std::string{get(value)};
-    if (alternative == property_alternative_int)
+    if (*alternative == property_alternative_int)
         return from_string<int>(value);
-    if (alternative == property_alternative_double)
+    if (*alternative == property_alternative_double)
         return from_string<double>(value);
-    if (alternative == property_alternative_bool) {
+    if (*alternative == property_alternative_bool) {
         if (value == property_value_true)
             return true;
         if (value == property_value_false)
             return false;
         throw Exception{"Bad property bool value: " + std::string{get(value)}};
     }
-    if (alternative == property_alternative_color)
+    if (*alternative == property_alternative_color)
         return to_color(value);
-    if (alternative == property_alternative_file)
+    if (*alternative == property_alternative_file)
         return File{get(value)};
 
-    throw Invalid_attribute{property_alternative, alternative};
+    throw Invalid_attribute{property_alternative, *alternative};
 }
 
 std::string read_name(Xml::Element property)
@@ -134,18 +134,18 @@ Map::Orientation read_orientation(Xml::Element map)
 
 Map::Render_order read_render_order(Xml::Element map)
 {
-    auto render_order{value(map, map_render_order)};
+    auto render_order{optional_value(map, map_render_order)};
 
-    if (render_order == map_render_order_right_down)
+    if (!render_order || *render_order == map_render_order_right_down)
         return Map::Render_order::right_down;
-    if (render_order == map_render_order_right_up)
+    if (*render_order == map_render_order_right_up)
         return Map::Render_order::right_up;
-    if (render_order == map_render_order_left_down)
+    if (*render_order == map_render_order_left_down)
         return Map::Render_order::left_down;
-    if (render_order == map_render_order_left_up)
+    if (*render_order == map_render_order_left_up)
         return Map::Render_order::left_up;
 
-    throw Invalid_attribute{map_render_order, render_order};
+    throw Invalid_attribute{map_render_order, *render_order};
 }
 
 std::optional<Color> read_background(Xml::Element map)
