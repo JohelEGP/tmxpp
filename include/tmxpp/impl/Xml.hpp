@@ -108,6 +108,17 @@ public:
                        [](auto&& attribute) { return Attribute{&attribute}; });
         }
 
+        // Returns: A range-v3 view of the children `Element`s.
+        auto children() const noexcept
+        {
+            return ranges::view::iota(
+                       rapidxml::node_iterator<>{elem},
+                       rapidxml::node_iterator<>{}) |
+                   ranges::view::indirect |
+                   ranges::view::transform(
+                       [](auto&& child) { return Element{&child}; });
+        }
+
         // Returns: A range-v3 view of the children `Element`s filtered by
         //          `name`.
         auto children(Name name) const noexcept
