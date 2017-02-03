@@ -119,13 +119,13 @@ constexpr Xml::Attribute::Name property_name{"name"sv};
 constexpr Xml::Attribute::Name property_value{"value"sv};
 constexpr Xml::Attribute::Value property_value_true{"true"sv};
 constexpr Xml::Attribute::Value property_value_false{"false"sv};
-constexpr Xml::Attribute::Name property_value_alternative{"type"sv};
-constexpr Xml::Attribute::Value property_value_alternative_string{"string"sv};
-constexpr Xml::Attribute::Value property_value_alternative_int{"int"sv};
-constexpr Xml::Attribute::Value property_value_alternative_double{"float"sv};
-constexpr Xml::Attribute::Value property_value_alternative_bool{"bool"sv};
-constexpr Xml::Attribute::Value property_value_alternative_color{"color"sv};
-constexpr Xml::Attribute::Value property_value_alternative_file{"file"sv};
+constexpr Xml::Attribute::Name property_alternative{"type"sv};
+constexpr Xml::Attribute::Value property_alternative_string{"string"sv};
+constexpr Xml::Attribute::Value property_alternative_int{"int"sv};
+constexpr Xml::Attribute::Value property_alternative_double{"float"sv};
+constexpr Xml::Attribute::Value property_alternative_bool{"bool"sv};
+constexpr Xml::Attribute::Value property_alternative_color{"color"sv};
+constexpr Xml::Attribute::Value property_alternative_file{"file"sv};
 
 } // namespace tmxpp::impl::tmx_info
 
