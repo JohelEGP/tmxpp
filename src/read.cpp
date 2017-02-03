@@ -31,26 +31,30 @@ namespace properties {
 
 Property::Value read_value(Xml::Element property)
 {
-    auto value{impl::value(property, property_value)};
+    auto value{optional_value(property, property_value)};
+
+    if (!value)
+        return std::string{get(property.value())};
+
     auto alternative{optional_value(property, property_alternative)};
 
     if (!alternative || *alternative == property_alternative_string)
-        return std::string{get(value)};
+        return std::string{get(*value)};
     if (*alternative == property_alternative_int)
-        return from_string<int>(value);
+        return from_string<int>(*value);
     if (*alternative == property_alternative_double)
-        return from_string<double>(value);
+        return from_string<double>(*value);
     if (*alternative == property_alternative_bool) {
-        if (value == property_value_true)
+        if (*value == property_value_true)
             return true;
-        if (value == property_value_false)
+        if (*value == property_value_false)
             return false;
-        throw Exception{"Bad property bool value: " + std::string{get(value)}};
+        throw Exception{"Bad property bool value: " + std::string{get(*value)}};
     }
     if (*alternative == property_alternative_color)
-        return to_color(value);
+        return to_color(*value);
     if (*alternative == property_alternative_file)
-        return File{get(value)};
+        return File{get(*value)};
 
     throw Invalid_attribute{property_alternative, *alternative};
 }
