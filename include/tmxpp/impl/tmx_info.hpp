@@ -117,6 +117,8 @@ constexpr Xml::Element::Name properties{"properties"sv};
 constexpr Xml::Element::Name property{"property"sv};
 constexpr Xml::Attribute::Name property_name{"name"sv};
 constexpr Xml::Attribute::Name property_value{"value"sv};
+constexpr Xml::Attribute::Value property_value_true{"true"sv};
+constexpr Xml::Attribute::Value property_value_false{"false"sv};
 constexpr Xml::Attribute::Name property_value_alternative{"type"sv};
 constexpr Xml::Attribute::Value property_value_alternative_string{"string"sv};
 constexpr Xml::Attribute::Value property_value_alternative_int{"int"sv};
