@@ -72,10 +72,10 @@ Color to_color(std::string_view color)
     auto channels{to_channels(color)};
 
     return {
-        has_alpha(color) ? static_cast<Color::Channel>(channels >> 24 & 0xFF)
+        has_alpha(color) ? static_cast<Color::Channel>((channels >> 24) & 0xFF)
                          : default_alpha,
-        static_cast<Color::Channel>(channels >> 16 & 0xFF),
-        static_cast<Color::Channel>(channels >> 8 & 0xFF),
+        static_cast<Color::Channel>((channels >> 16) & 0xFF),
+        static_cast<Color::Channel>((channels >> 8) & 0xFF),
         static_cast<Color::Channel>(channels & 0xFF),
     };
 }
