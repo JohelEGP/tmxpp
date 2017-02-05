@@ -5,7 +5,10 @@
 #include <optional>
 #include <string>
 #include <string_view>
+#include <gsl/gsl>
+#include <gsl/string_span>
 #include <boost/lexical_cast.hpp>
+#include <boost/tokenizer.hpp>
 #include <range/v3/algorithm/any_of.hpp>
 #include <range/v3/begin_end.hpp>
 #include <range/v3/distance.hpp>
@@ -111,6 +114,19 @@ ReservableContainer transform(Range range, Function transform)
 
     container.assign(ranges::begin(elements), ranges::end(elements));
     return container;
+}
+
+// Returns: A range-v3 range of `std::string`s where the elements are the
+//          substrings in `to_tokenize` separated by the characters in
+//          `separators`.
+auto tokenize(
+    std::string_view to_tokenize, gsl::not_null<gsl::czstring<>> separators)
+{
+    using TokenizerFunction = boost::char_separator<char>;
+    using Tokenizer =
+        boost::tokenizer<TokenizerFunction, std::string_view::iterator>;
+
+    return Tokenizer{to_tokenize, TokenizerFunction{separators}};
 }
 
 } // namespace tmxpp::impl
