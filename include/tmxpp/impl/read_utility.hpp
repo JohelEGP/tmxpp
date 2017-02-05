@@ -87,7 +87,7 @@ Arithmetic from_string(Xml::Attribute::Value value)
 }
 
 // Returns: The range of `element`'s children whose names are in `names`.
-auto filter(
+auto children(
     Xml::Element element, std::initializer_list<Xml::Element::Name> names)
 {
     return element.children() | ranges::view::filter([names](auto&& child) {
