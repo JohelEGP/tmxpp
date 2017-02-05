@@ -18,7 +18,7 @@ std::string quoted(std::string_view s)
 } // namespace
 
 Invalid_attribute::Invalid_attribute(Name name)
-  : Exception{"Invalid attribute " + quoted(get(name))}
+  : Exception{"Expected attribute " + quoted(get(name))}
 {
 }
 
@@ -29,13 +29,13 @@ Invalid_attribute::Invalid_attribute(Name name, Value value)
 }
 
 Invalid_element::Invalid_element(Name name)
-  : Exception{"Invalid element " + std::string{get(name)}}
+  : Exception{"Expected element " + std::string{get(name)}}
 {
 }
 
 Invalid_element::Invalid_element(Name name, Value value)
-  : Exception{"Invalid element value <" + std::string{get(name)} + ">\n" +
-              std::string{get(value)} + "\n<" + std::string{get(name)} + '>'}
+  : Exception{"Invalid element value <" + std::string{get(name)} + ">" +
+              std::string{get(value)} + "<" + std::string{get(name)} + '>'}
 {
 }
 
