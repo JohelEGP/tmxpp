@@ -100,7 +100,6 @@ constexpr Xml::Element::Name object_polygon{"polygon"sv};
 constexpr Xml::Attribute::Name object_polygon_points{"points"sv};
 
 constexpr Xml::Element::Name object_polyline{"polyline"sv};
-constexpr Xml::Attribute::Name object_polyline_points{"points"sv};
 
 constexpr Xml::Element::Name image_layer{"imagelayer"sv};
 
