@@ -7,6 +7,7 @@
 #include <tmxpp/impl/read_utility.hpp>
 #include <tmxpp/impl/tmx_info.hpp>
 #include <tmxpp/impl/to_color.hpp>
+#include <tmxpp/impl/to_flipped_global_id.hpp>
 
 namespace tmxpp {
 
@@ -296,6 +297,57 @@ Image_collection read_image_collection(Xml::Element image_collection)
 
 using tile_set::tile_set::read_tile_set;
 using tile_set::image_collection::read_image_collection;
+
+namespace data {
+
+Data::Encoding read_encoding(Xml::Element data)
+{
+    auto encoding{value(data, data_encoding)};
+
+    if (encoding == data_encoding_csv)
+        return Data::Encoding::csv;
+    if (encoding == data_encoding_base64)
+        return Data::Encoding::base64;
+
+    throw Invalid_attribute{data_encoding, encoding};
+}
+
+Data::Compression read_compression(Xml::Element data)
+{
+    auto compression{optional_value(data, data_compression)};
+
+    if (!compression)
+        return Data::Compression::none;
+    if (*compression == data_compression_zlib)
+        return Data::Compression::zlib;
+
+    throw Invalid_attribute{data_compression, *compression};
+}
+
+Data::Flipped_global_ids read_flipped_global_ids(
+    Data::Encoding encoding, Data::Compression compression,
+    Xml::Element::Value data)
+{
+    if (encoding != Data::Encoding::csv &&
+        compression != Data::Compression::none)
+        throw Exception{"Can only handle csv-encoded data."};
+
+    return transform<Data::Flipped_global_ids>(
+        tokenize(get(data), ",\n"), to_flipped_global_id);
+}
+
+Data read_data(Xml::Element data)
+{
+    auto encoding{read_encoding(data)};
+    auto compression{read_compression(data)};
+
+    return {encoding, compression,
+            read_flipped_global_ids(encoding, compression, data.value())};
+}
+
+} // namespace data
+
+using data::read_data;
 
 namespace layer {
 
