@@ -391,6 +391,18 @@ Layer read_layer(Xml::Element layer)
 
 using layer::read_layer;
 
+namespace tile_layer {
+
+Tile_layer read_tile_layer(Xml::Element tile_layer)
+{
+    return {read_layer(tile_layer),
+            read_data(tile_layer.child(tmx_info::data))};
+}
+
+} // namespace tile_layer
+
+using tile_layer::read_tile_layer;
+
 namespace map {
 
 std::string read_version(Xml::Element map)
