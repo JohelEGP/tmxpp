@@ -8,6 +8,7 @@
 #include <tmxpp/impl/tmx_info.hpp>
 #include <tmxpp/impl/to_color.hpp>
 #include <tmxpp/impl/to_flipped_global_id.hpp>
+#include <tmxpp/impl/to_point.hpp>
 
 namespace tmxpp {
 
@@ -402,6 +403,97 @@ Tile_layer read_tile_layer(Xml::Element tile_layer)
 } // namespace tile_layer
 
 using tile_layer::read_tile_layer;
+
+namespace object {
+
+Unique_id read_unique_id(Xml::Element object)
+{
+    return from_string<Unique_id>(value(object, object_unique_id));
+}
+
+std::string read_name(Xml::Element object)
+{
+    if (auto name{optional_value(object, object_name)})
+        return std::string{get(*name)};
+    return {};
+}
+
+std::string read_type(Xml::Element object)
+{
+    if (auto type{optional_value(object, object_type)})
+        return std::string{get(*type)};
+    return {};
+}
+
+Point read_position(Xml::Element object)
+{
+    return Point{from_string<Pixel>(value(object, point_x)),
+                 from_string<Pixel>(value(object, point_y))};
+}
+
+Object::Polygon::Points read_points(Xml::Element poly)
+{
+    return transform<Object::Polygon::Points>(
+        tokenize(get(value(poly, object_polygon_points)), " "), to_point);
+}
+
+pxSize read_size(Xml::Element object)
+{
+    auto w{optional_value(object, size_width)};
+    auto h{optional_value(object, size_height)};
+
+    if (!w && !h)
+        return {};
+
+    return {w ? from_string<pxSize::Dimension>(*w) : Pixel{0},
+            h ? from_string<pxSize::Dimension>(*h) : Pixel{0}};
+}
+
+Object::Shape read_shape(Xml::Element object)
+{
+    if (auto polyline{object.optional_child(object_polyline)})
+        return Object::Polyline{read_points(*polyline)};
+
+    if (auto polygon{object.optional_child(object_polygon)})
+        return Object::Polygon{read_points(*polygon)};
+
+    if (object.optional_child(object_ellipse))
+        return Object::Ellipse{read_size(object)};
+
+    return Object::Rectangle{read_size(object)};
+}
+
+Degrees read_clockwise_rotation(Xml::Element object)
+{
+    if (auto rotation{optional_value(object, object_clockwise_rotation)})
+        return from_string<Degrees>(*rotation);
+    return {};
+}
+
+Tile_id read_global_id(Xml::Element object)
+{
+    if (auto global_id{optional_value(object, object_global_id)})
+        return from_string<Tile_id>(*global_id);
+    return {};
+}
+
+bool read_visible(Xml::Element object)
+{
+    return layer::read_visible(object);
+}
+
+Object read_object(Xml::Element object)
+{
+    return {read_unique_id(object), read_name(object),
+            read_type(object),      read_position(object),
+            read_shape(object),     read_clockwise_rotation(object),
+            read_global_id(object), read_visible(object),
+            read_properties(object)};
+}
+
+} // namespace object
+
+using object::read_object;
 
 namespace map {
 
