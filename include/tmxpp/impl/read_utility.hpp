@@ -16,6 +16,7 @@
 #include <range/v3/view/filter.hpp>
 #include <range/v3/view/transform.hpp>
 #include <type_safe/strong_typedef.hpp>
+#include <tmxpp/Degrees.hpp>
 #include <tmxpp/Pixel.hpp>
 #include <tmxpp/Tile_id.hpp>
 #include <tmxpp/Unique_id.hpp>
@@ -73,6 +74,12 @@ template <>
 Unique_id from_string<Unique_id>(std::string_view s)
 {
     return Unique_id{from_string<type_safe::underlying_type<Unique_id>>(s)};
+}
+
+template <>
+Degrees from_string<Degrees>(std::string_view s)
+{
+    return Degrees{from_string<type_safe::underlying_type<Degrees>>(s)};
 }
 
 template <>
