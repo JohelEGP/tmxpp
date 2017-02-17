@@ -107,16 +107,16 @@ auto children(
 }
 
 // Requires: `ReservableContainer` is a STL `SequenceContainer` with a `reserve`
-//           member. `Range` is a range-v3 range. `Function` takes an element of
-//           the `range` and returns an element of the `ReservableContainer`.
-// Returns: The `range` `transform`ed into the `ReservableContainer`.
-template <class ReservableContainer, class Range, class Function>
-ReservableContainer transform(Range range, Function transform)
+//           member. `View` is a range-v3 view. `Function` takes an element of
+//           the `view` and returns an element of the `ReservableContainer`.
+// Returns: The `view` `transform`ed into the `ReservableContainer`.
+template <class ReservableContainer, class View, class Function>
+ReservableContainer transform(View view, Function transform)
 {
     ReservableContainer container;
-    container.reserve(ranges::distance(range));
+    container.reserve(ranges::distance(view));
 
-    auto elements{range | ranges::view::transform(transform) |
+    auto elements{view | ranges::view::transform(transform) |
                   ranges::view::bounded};
 
     container.assign(ranges::begin(elements), ranges::end(elements));
