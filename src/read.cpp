@@ -1,6 +1,7 @@
 #include <optional>
 #include <string>
 #include <tmxpp.hpp>
+#include <tmxpp/exceptions.hpp>
 #include <tmxpp/impl/Xml.hpp>
 #include <tmxpp/impl/exceptions.hpp>
 #include <tmxpp/impl/read_utility.hpp>
