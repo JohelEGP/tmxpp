@@ -381,8 +381,8 @@ Offset read_offset(Xml::Element layer)
     auto x{optional_value(layer, offset_x)};
     auto y{optional_value(layer, offset_y)};
 
-    return {x ? from_string<Offset::Coordinate>(*x) : Pixel{0},
-            y ? from_string<Offset::Coordinate>(*y) : Pixel{0}};
+    return {x ? from_string<Offset::Coordinate>(*x) : Offset::Coordinate{0},
+            y ? from_string<Offset::Coordinate>(*y) : Offset::Coordinate{0}};
 }
 
 Layer read_layer(Xml::Element layer)
@@ -430,8 +430,8 @@ std::string read_type(Xml::Element object)
 
 Point read_position(Xml::Element object)
 {
-    return {from_string<Pixel>(value(object, point_x)),
-            from_string<Pixel>(value(object, point_y))};
+    return {from_string<Point::Coordinate>(value(object, point_x)),
+            from_string<Point::Coordinate>(value(object, point_y))};
 }
 
 Object::Polygon::Points read_points(Xml::Element poly)
@@ -448,8 +448,8 @@ pxSize read_size(Xml::Element object)
     if (!w && !h)
         return {};
 
-    return {w ? from_string<pxSize::Dimension>(*w) : Pixel{0},
-            h ? from_string<pxSize::Dimension>(*h) : Pixel{0}};
+    return {w ? from_string<pxSize::Dimension>(*w) : pxSize::Dimension{0},
+            h ? from_string<pxSize::Dimension>(*h) : pxSize::Dimension{0}};
 }
 
 Object::Shape read_shape(Xml::Element object)
