@@ -639,12 +639,32 @@ Unique_id read_next_unique_id(Xml::Element map)
     return from_string<Unique_id>(value(map, map_next_unique_id));
 }
 
+// Returns: `true` if the `Element` represents a `tmxpp::Tile_set`, and `false`
+//          if it represents an `Image_collection`.
+bool is_tmxpp_tile_set(Xml::Element tile_set)
+{
+    return bool{tile_set.optional_child(tmx_info::image)};
+}
+
+Map::Tile_set read_tile_set(Xml::Element tile_set)
+{
+    if (is_tmxpp_tile_set(tile_set))
+        return impl::read_tile_set(tile_set);
+    return read_image_collection(tile_set);
+}
+
+Map::Tile_sets read_tile_sets(Xml::Element map)
+{
+    return transform<Map::Tile_sets>(
+        map.children(tmx_info::tile_set), read_tile_set);
+}
+
 Map read_map(Xml::Element map)
 {
-    return {read_version(map),        read_orientation(map),
-            read_render_order(map),   read_isize(map),
-            read_tile_size(map),      read_background(map),
-            read_next_unique_id(map), read_properties(map)};
+    return {
+        read_version(map),        read_orientation(map), read_render_order(map),
+        read_isize(map),          read_tile_size(map),   read_background(map),
+        read_next_unique_id(map), read_properties(map),  read_tile_sets(map)};
 }
 
 } // namespace map
