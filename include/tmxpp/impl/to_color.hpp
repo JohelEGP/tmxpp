@@ -25,11 +25,13 @@ bool is_well_formatted(std::string_view s)
     return std::regex_match(s.begin(), s.end(), format);
 }
 
+constexpr std::string_view format_with_alpha{"#AARRGGBB"};
+
 // Requires: `is_well_formatted(color)`
 // Returns: The hexadecimal substring in `color`.
 constexpr std::string_view hex_substr(std::string_view color) noexcept
 {
-    return color.substr(1);
+    return color[0] == format_with_alpha[0] ? color.substr(1) : color;
 }
 
 using Channels = std::uint_least32_t;
@@ -53,8 +55,6 @@ Channels to_channels(std::string_view color)
 // Returns: `true` if `color` has an alpha channel, and `false` otherwise.
 constexpr bool has_alpha(std::string_view color) noexcept
 {
-    constexpr std::string_view format_with_alpha{"#AARRGGBB"};
-
     return color.size() == format_with_alpha.size();
 }
 
