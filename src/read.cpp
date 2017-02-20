@@ -1,4 +1,3 @@
-#include <chrono>
 #include <optional>
 #include <string>
 #include <tmxpp.hpp>
@@ -143,9 +142,9 @@ Tile_id read_local_id(Xml::Element frame)
     return from_string<Tile_id>(value(frame, frame_local_id));
 }
 
-std::chrono::milliseconds read_duration(Xml::Element frame)
+Frame::Duration read_duration(Xml::Element frame)
 {
-    return from_string<std::chrono::milliseconds>(value(frame, frame_duration));
+    return from_string<Frame::Duration>(value(frame, frame_duration));
 }
 
 Frame read_frame(Xml::Element frame)

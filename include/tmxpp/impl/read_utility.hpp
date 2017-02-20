@@ -1,7 +1,6 @@
 #ifndef TMXPP_IMPL_READ_UTILITY_HPP
 #define TMXPP_IMPL_READ_UTILITY_HPP
 
-#include <chrono>
 #include <ios>
 #include <optional>
 #include <sstream>
@@ -97,11 +96,9 @@ Degrees from_string<Degrees>(std::string_view s)
 }
 
 template <>
-std::chrono::milliseconds
-from_string<std::chrono::milliseconds>(std::string_view s)
+Frame::Duration from_string<Frame::Duration>(std::string_view s)
 {
-    return std::chrono::milliseconds{
-        from_string<std::chrono::milliseconds::rep>(s)};
+    return Frame::Duration{from_string<Frame::Duration::rep>(s)};
 }
 
 template <class T>
