@@ -445,9 +445,6 @@ pxSize read_size(Xml::Element object)
     auto w{optional_value(object, size_width)};
     auto h{optional_value(object, size_height)};
 
-    if (!w && !h)
-        return {};
-
     return {w ? from_string<pxSize::Dimension>(*w) : pxSize::Dimension{0},
             h ? from_string<pxSize::Dimension>(*h) : pxSize::Dimension{0}};
 }
