@@ -332,7 +332,7 @@ Data::Flipped_global_ids read_flipped_global_ids(
     Data::Encoding encoding, Data::Compression compression,
     Xml::Element::Value data)
 {
-    if (encoding != Data::Encoding::csv &&
+    if (encoding != Data::Encoding::csv ||
         compression != Data::Compression::none)
         throw Exception{"Can only handle csv-encoded data."};
 
