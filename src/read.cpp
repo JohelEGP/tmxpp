@@ -19,9 +19,8 @@ using namespace tmx_info;
 
 pxSize read_tile_size(Xml::Element element)
 {
-    return pxSize{
-        from_string<pxSize::Dimension>(value(element, tile_size_width)),
-        from_string<pxSize::Dimension>(value(element, tile_size_height))};
+    return {from_string<pxSize::Dimension>(value(element, tile_size_width)),
+            from_string<pxSize::Dimension>(value(element, tile_size_height))};
 }
 
 namespace properties {
@@ -195,7 +194,7 @@ Offset read_tile_offset(Xml::Element tile_set)
     if (!tile_offset)
         return {};
 
-    return Offset{
+    return {
         from_string<Offset::Coordinate>(value(*tile_offset, tile_offset_x)),
         from_string<Offset::Coordinate>(value(*tile_offset, tile_offset_y))};
 }
@@ -382,8 +381,8 @@ Offset read_offset(Xml::Element layer)
     auto x{optional_value(layer, offset_x)};
     auto y{optional_value(layer, offset_y)};
 
-    return Offset{x ? from_string<Offset::Coordinate>(*x) : Pixel{0},
-                  y ? from_string<Offset::Coordinate>(*y) : Pixel{0}};
+    return {x ? from_string<Offset::Coordinate>(*x) : Pixel{0},
+            y ? from_string<Offset::Coordinate>(*y) : Pixel{0}};
 }
 
 Layer read_layer(Xml::Element layer)
@@ -431,8 +430,8 @@ std::string read_type(Xml::Element object)
 
 Point read_position(Xml::Element object)
 {
-    return Point{from_string<Pixel>(value(object, point_x)),
-                 from_string<Pixel>(value(object, point_y))};
+    return {from_string<Pixel>(value(object, point_x)),
+            from_string<Pixel>(value(object, point_y))};
 }
 
 Object::Polygon::Points read_points(Xml::Element poly)
@@ -623,8 +622,8 @@ Map::Render_order read_render_order(Xml::Element map)
 
 iSize read_size(Xml::Element map)
 {
-    return iSize{from_string<iSize::Dimension>(value(map, size_width)),
-                 from_string<iSize::Dimension>(value(map, size_height))};
+    return {from_string<iSize::Dimension>(value(map, size_width)),
+            from_string<iSize::Dimension>(value(map, size_height))};
 }
 
 std::optional<Color> read_background(Xml::Element map)
