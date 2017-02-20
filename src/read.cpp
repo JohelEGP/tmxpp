@@ -167,6 +167,14 @@ Animation read_animation(Xml::Element element)
 
 using animation::read_animation;
 
+namespace object_layer {
+
+Object_layer read_object_layer(Xml::Element object_layer);
+
+} // namespace object_layer
+
+using object_layer::read_object_layer;
+
 namespace tile_set {
 
 Tile_id read_first_global_id(Xml::Element tile_set)
@@ -205,6 +213,8 @@ Tile_id read_tile_local_id(Xml::Element tile)
 
 std::optional<Object_layer> read_tile_collision_shape(Xml::Element tile)
 {
+    if (auto collision_shape{tile.optional_child(tmx_info::object_layer)})
+        return read_object_layer(*collision_shape);
     return {};
 }
 
@@ -494,6 +504,41 @@ Object read_object(Xml::Element object)
 } // namespace object
 
 using object::read_object;
+
+namespace object_layer {
+
+std::optional<Color> read_color(Xml::Element object_layer)
+{
+    if (auto color{optional_value(object_layer, object_layer_color)})
+        return to_color(*color);
+    return {};
+}
+
+Object_layer::Draw_order read_draw_order(Xml::Element object_layer)
+{
+    auto draw_order{optional_value(object_layer, object_layer_draw_order)};
+
+    if (!draw_order || *draw_order == object_layer_draw_order_top_down)
+        return Object_layer::Draw_order::top_down;
+    if (*draw_order == object_layer_draw_order_index)
+        return Object_layer::Draw_order::index;
+
+    throw Invalid_attribute{object_layer_draw_order, *draw_order};
+}
+
+Object_layer::Objects read_objects(Xml::Element object_layer)
+{
+    return transform<Object_layer::Objects>(
+        object_layer.children(tmx_info::object), read_object);
+}
+
+Object_layer read_object_layer(Xml::Element object_layer)
+{
+    return {read_layer(object_layer), read_color(object_layer),
+            read_draw_order(object_layer), read_objects(object_layer)};
+}
+
+} // namespace object_layer
 
 namespace map {
 
