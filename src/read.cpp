@@ -153,14 +153,14 @@ Frame read_frame(Xml::Element frame)
     return {read_local_id(frame), read_duration(frame)};
 }
 
-Animation read_animation(Xml::Element element)
+Animation read_animation(Xml::Element tile)
 {
-    auto animation{element.optional_child(tmx_info::animation)};
+    auto animation{tile.optional_child(tmx_info::animation)};
 
     if (!animation)
         return {};
 
-    return transform<Animation>(element.children(frame), read_frame);
+    return transform<Animation>(tile.children(frame), read_frame);
 }
 
 } // namespace animation

@@ -74,7 +74,7 @@ public:
         Attribute attribute(Attribute::Name name) const;
 
         // Returns: A child `Element` with the given `name`.
-        // Throws: `Invalid_attribute` if there is no such child `Element`.
+        // Throws: `Invalid_element` if there is no such child `Element`.
         Element child(Name name) const;
 
         // Returns: An `Attribute` with the given `name`, if any.

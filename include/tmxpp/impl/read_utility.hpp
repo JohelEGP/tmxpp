@@ -104,10 +104,10 @@ from_string<std::chrono::milliseconds>(std::string_view s)
         from_string<std::chrono::milliseconds::rep>(s)};
 }
 
-template <class Arithmetic>
-Arithmetic from_string(Xml::Attribute::Value value)
+template <class T>
+T from_string(Xml::Attribute::Value value)
 {
-    return from_string<Arithmetic>(get(value));
+    return from_string<T>(get(value));
 }
 
 // Returns: The range of `element`'s children whose names are in `names`.

@@ -13,8 +13,8 @@
 namespace tmxpp::impl {
 
 Point to_point(std::string_view point) try {
-    auto tokens{tokenize(point, ",")};
-    auto range{tokens |
+    auto coordinates{tokenize(point, ",")};
+    auto range{coordinates |
                ranges::view::transform([](std::string_view coordinate) {
                    return from_string<Point::Coordinate>(coordinate);
                }) |
