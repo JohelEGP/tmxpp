@@ -16,10 +16,10 @@ namespace tmxpp::impl {
 namespace color {
 
 // Returns: `true` if `s` has the format of a TMX color, and `false` otherwise.
-// Notes: A TMX color has the format "#AARRGGBB" or "#RRGGBB".
+// Notes: A TMX color has the format "#AARRGGBB", "#RRGGBB" or "RRGGBB".
 bool is_well_formatted(std::string_view s)
 {
-    static const std::regex format{"#([[:xdigit:]]{2})?[[:xdigit:]]{6}",
+    static const std::regex format{"((#[[:xdigit:]]{2})|#)?[[:xdigit:]]{6}",
                                    std::regex::nosubs};
 
     return std::regex_match(s.begin(), s.end(), format);
