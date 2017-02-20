@@ -189,10 +189,8 @@ public:
     // Throws: `Exception` in case of parsing error or lack of root element.
     explicit Xml(const std::string& path) : xml{path.c_str()}
     {
-        using namespace rapidxml;
-
         try {
-            doc.parse<parse_fastest>(std::as_const(xml)->data());
+            doc.parse<rapidxml::parse_fastest>(std::as_const(xml)->data());
         }
         catch (const rapidxml::parse_error& e) {
             throw Exception{e.what()};
