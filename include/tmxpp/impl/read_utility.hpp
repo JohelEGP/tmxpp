@@ -2,7 +2,9 @@
 #define TMXPP_IMPL_READ_UTILITY_HPP
 
 #include <chrono>
+#include <ios>
 #include <optional>
+#include <sstream>
 #include <string>
 #include <string_view>
 #include <gsl/gsl>
@@ -50,6 +52,18 @@ Arithmetic from_string(std::string_view s) try {
 catch (const boost::bad_lexical_cast& e) {
     throw Exception{std::string{s} + " could not be converted to Arithmetic. " +
                     e.what()};
+}
+
+template <>
+double from_string<double>(std::string_view s)
+{
+    std::stringstream ss;
+    ss << std::noskipws << std::scientific << s;
+    double num;
+    ss >> num;
+    if (!ss || !ss.eof())
+        throw Exception{std::string{s} + " could not be converted to double."};
+    return num;
 }
 
 template <>
