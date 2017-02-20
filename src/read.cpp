@@ -141,7 +141,7 @@ Animation read_animation(Xml::Element tile)
     if (!animation)
         return {};
 
-    return transform<Animation>(tile.children(frame), read_frame);
+    return transform<Animation>(animation->children(frame), read_frame);
 }
 
 } // namespace animation
