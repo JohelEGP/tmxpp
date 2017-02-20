@@ -95,17 +95,17 @@ std::optional<Color> read_transparent(Xml::Element image)
 
 std::optional<pxSize> read_size(Xml::Element image)
 {
-    auto width{optional_value(image, size_width)};
-    auto height{optional_value(image, size_height)};
+    auto w{optional_value(image, size_width)};
+    auto h{optional_value(image, size_height)};
 
-    if (bool{width} != bool{height})
+    if (bool{w} != bool{h})
         throw Exception{"Expected image with both width and height, or none."};
 
-    if (!width)
+    if (!w)
         return {};
 
-    return pxSize{from_string<pxSize::Dimension>(*width),
-                  from_string<pxSize::Dimension>(*height)};
+    return pxSize{from_string<pxSize::Dimension>(*w),
+                  from_string<pxSize::Dimension>(*h)};
 }
 
 Image read_image(Xml::Element image)
