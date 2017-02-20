@@ -6,7 +6,9 @@
 #include <string>
 #include <string_view>
 #include <utility>
+#include <gsl/gsl>
 #include <gsl/gsl_assert>
+#include <gsl/string_span>
 #include <range/v3/view/filter.hpp>
 #include <range/v3/view/indirect.hpp>
 #include <range/v3/view/iota.hpp>
@@ -187,7 +189,7 @@ public:
 
     // Effects: Loads and parses the `Xml` `path`.
     // Throws: `Exception` in case of parsing error or lack of root element.
-    explicit Xml(const std::string& path) : xml{path.c_str()}
+    explicit Xml(gsl::not_null<gsl::czstring<>> path) : xml{path}
     {
         try {
             doc.parse<rapidxml::parse_fastest>(std::as_const(xml)->data());
@@ -197,7 +199,7 @@ public:
         }
 
         if (root().elem == nullptr)
-            throw Exception{path + " has no root element"};
+            throw Exception{std::string{path} + " has no root element."};
     }
 
     // Effects: Creates an `Xml` with the root `Element` `name`.

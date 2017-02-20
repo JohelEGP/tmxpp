@@ -694,7 +694,7 @@ using map::read_map;
 } // namespace
 } // namespace impl
 
-Map read_tmx(const std::string& path)
+Map read_tmx(gsl::not_null<gsl::czstring<>> path)
 {
     const impl::Xml tmx{path};
 
