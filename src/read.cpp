@@ -659,12 +659,36 @@ Map::Tile_sets read_tile_sets(Xml::Element map)
         map.children(tmx_info::tile_set), read_tile_set);
 }
 
+Map::Layer read_layer(Xml::Element layer)
+{
+    auto name{layer.name()};
+
+    if (name == tmx_info::tile_layer)
+        return read_tile_layer(layer);
+    if (name == tmx_info::object_layer)
+        return read_object_layer(layer);
+    if (name == tmx_info::image_layer)
+        return read_image_layer(layer);
+
+    throw Invalid_element{name};
+}
+
+Map::Layers read_layers(Xml::Element map)
+{
+    return transform<Map::Layers>(
+        children(
+            map, {tmx_info::tile_layer, tmx_info::object_layer,
+                  tmx_info::image_layer}),
+        read_layer);
+}
+
 Map read_map(Xml::Element map)
 {
-    return {
-        read_version(map),        read_orientation(map), read_render_order(map),
-        read_isize(map),          read_tile_size(map),   read_background(map),
-        read_next_unique_id(map), read_properties(map),  read_tile_sets(map)};
+    return {read_version(map),        read_orientation(map),
+            read_render_order(map),   read_isize(map),
+            read_tile_size(map),      read_background(map),
+            read_next_unique_id(map), read_properties(map),
+            read_tile_sets(map),      read_layers(map)};
 }
 
 } // namespace map
