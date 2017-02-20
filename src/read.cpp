@@ -16,12 +16,6 @@ namespace {
 
 using namespace tmx_info;
 
-iSize read_isize(Xml::Element element)
-{
-    return iSize{from_string<iSize::Dimension>(value(element, size_width)),
-                 from_string<iSize::Dimension>(value(element, size_height))};
-}
-
 pxSize read_tile_size(Xml::Element element)
 {
     return pxSize{
@@ -626,6 +620,12 @@ Map::Render_order read_render_order(Xml::Element map)
     throw Invalid_attribute{map_render_order, *render_order};
 }
 
+iSize read_size(Xml::Element map)
+{
+    return iSize{from_string<iSize::Dimension>(value(map, size_width)),
+                 from_string<iSize::Dimension>(value(map, size_height))};
+}
+
 std::optional<Color> read_background(Xml::Element map)
 {
     if (auto color{optional_value(map, map_background)})
@@ -684,7 +684,7 @@ Map::Layers read_layers(Xml::Element map)
 Map read_map(Xml::Element map)
 {
     return {read_version(map),        read_orientation(map),
-            read_render_order(map),   read_isize(map),
+            read_render_order(map),   read_size(map),
             read_tile_size(map),      read_background(map),
             read_next_unique_id(map), read_properties(map),
             read_tile_sets(map),      read_layers(map)};
