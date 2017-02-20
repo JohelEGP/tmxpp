@@ -8,16 +8,15 @@ namespace tmxpp {
 struct Color {
     using Channel = std::uint_least8_t;
 
-    Channel alpha;
-    Channel red;
-    Channel green;
-    Channel blue;
+    Channel a;
+    Channel r;
+    Channel g;
+    Channel b;
 };
 
 constexpr bool operator==(Color l, Color r) noexcept
 {
-    return l.alpha == r.alpha && l.red == r.red && l.green == r.green &&
-           l.blue == r.blue;
+    return l.a == r.a && l.r == r.r && l.g == r.g && l.b == r.b;
 }
 
 constexpr bool operator!=(Color l, Color r) noexcept

@@ -9,8 +9,8 @@ template <class Number>
 struct Size {
     using Dimension = Number;
 
-    Dimension width;
-    Dimension height;
+    Dimension w;
+    Dimension h;
 };
 
 using pxSize = Size<Pixel>;
@@ -19,7 +19,7 @@ using iSize  = Size<int>;
 template <class N>
 constexpr bool operator==(Size<N> l, Size<N> r) noexcept
 {
-    return l.width == r.width && l.height == r.height;
+    return l.w == r.w && l.h == r.h;
 }
 
 template <class N>
