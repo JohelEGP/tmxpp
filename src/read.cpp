@@ -540,6 +540,24 @@ Object_layer read_object_layer(Xml::Element object_layer)
 
 } // namespace object_layer
 
+namespace image_layer {
+
+std::optional<Image> read_image(Xml::Element image_layer)
+{
+    if (auto image{image_layer.optional_child(tmx_info::image)})
+        return impl::read_image(*image);
+    return {};
+}
+
+Image_layer read_image_layer(Xml::Element image_layer)
+{
+    return {read_layer(image_layer), read_image(image_layer)};
+}
+
+} // namespace image_layer
+
+using image_layer::read_image_layer;
+
 namespace map {
 
 std::string read_version(Xml::Element map)
