@@ -1,6 +1,5 @@
 #include <fstream>
 #include <string>
-#include <string_view>
 #include <variant>
 #include <boost/hana/functional/overload.hpp>
 #include <tmxpp.hpp>
@@ -19,34 +18,34 @@ using namespace tmx_info;
 
 void write(iSize sz, Xml::Element elem)
 {
-    add(elem, size_width, to_string(sz.w));
-    add(elem, size_height, to_string(sz.h));
+    add(elem, size_width, sz.w);
+    add(elem, size_height, sz.h);
 }
 
 void write_tile(pxSize sz, Xml::Element elem)
 {
-    add(elem, tile_size_width, to_string(sz.w));
-    add(elem, tile_size_height, to_string(sz.h));
+    add(elem, tile_size_width, sz.w);
+    add(elem, tile_size_height, sz.h);
 }
 
 // Properties ------------------------------------------------------------------
 
 void write(const Property::Value& value, Xml::Element prop)
 {
-    auto add = [=](Xml::Attribute::Value alternative, std::string_view value) {
+    auto add = [=](Xml::Attribute::Value alternative, auto value) {
         prop.add(property_alternative, alternative);
         impl::add(prop, property_value, value);
     };
 
     std::visit(
         boost::hana::overload(
-            [=](int i) { add(property_alternative_int, to_string(i)); },
-            [=](double d) { add(property_alternative_double, to_string(d)); },
+            [=](int i) { add(property_alternative_int, i); },
+            [=](double d) { add(property_alternative_double, d); },
             [=](bool b) {
                 add(property_alternative_bool,
                     get(b ? property_value_true : property_value_false));
             },
-            [=](Color c) { add(property_alternative_color, to_string(c)); },
+            [=](Color c) { add(property_alternative_color, c); },
             [=](File f) { add(property_alternative_file, f.string()); },
             [=](const std::string& s) {
                 prop.add(property_alternative, property_alternative_string);
@@ -121,7 +120,7 @@ void write(Map::Staggered s, Xml::Element map)
 
 void write(Map::Hexagonal h, Xml::Element map)
 {
-    add(map, map_hexagonal_side_legth, to_string(h.side_length));
+    add(map, map_hexagonal_side_legth, h.side_length);
     write(static_cast<Map::Staggered>(h), map);
 }
 
@@ -156,8 +155,8 @@ void write(const Map& map, Xml::Element elem)
     write(map.size, elem);
     write_tile(map.general_tile_size, elem);
     if (auto bg{map.background})
-        add(elem, map_background, to_string(*bg));
-    add(elem, map_next_unique_id, to_string(map.next_unique_id));
+        add(elem, map_background, *bg);
+    add(elem, map_next_unique_id, map.next_unique_id);
     write(map.properties, elem);
 }
 

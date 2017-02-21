@@ -34,6 +34,14 @@ std::string to_string(type_safe::strong_typedef<Phantom, T> x)
     return to_string(get(x));
 }
 
+template <
+    class T,
+    class = std::enable_if_t<!std::is_convertible_v<T, std::string_view>>>
+void add(Xml::Element elem, Xml::Attribute::Name name, T value)
+{
+    add(elem, name, to_string(value));
+}
+
 } // namespace tmxpp::impl
 
 #endif // TMXPP_IMPL_WRITE_UTILITY_HPP
