@@ -11,9 +11,9 @@ namespace tmxpp {
 
 void write(const Map&, gsl::not_null<gsl::czstring<>> path);
 
-void write(const Map::Tile_set&, gsl::not_null<gsl::czstring<>> path);
-void write(const Tile_set&, gsl::not_null<gsl::czstring<>> path);
-void write(const Image_collection&, gsl::not_null<gsl::czstring<>> path);
+void write(const Map::Tile_set&);
+void write(const Tile_set&);
+void write(const Image_collection&);
 
 } // namespace tmxpp
 

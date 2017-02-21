@@ -706,8 +706,8 @@ Map read_tmx(gsl::not_null<gsl::czstring<>> path)
     throw impl::Invalid_element{map.name()};
 }
 
-Map::Tile_set read_tsx(const std::string& path);
-Tile_set read_tile_set(const std::string& path);
-Image_collection read_image_collection(const std::string& path);
+Map::Tile_set read_tsx(Tile_id first_global_id, File tsx);
+Tile_set read_tile_set(Tile_id first_global_id, File tsx);
+Image_collection read_image_collection(Tile_id first_global_id, File tsx);
 
 } // namespace tmxpp
