@@ -120,6 +120,22 @@ void write_tile(Offset o, Xml::Element parent)
     add(elem, tile_offset_y, o.y);
 }
 
+template <
+    class Tile, class = std::enable_if_t<
+                    std::is_same_v<Tile, Tile_set::Tile> ||
+                    std::is_same_v<Tile, Image_collection::Tile>>>
+void write(const Tile& tile, Xml::Element elem)
+{
+    add(elem, tile_set_tile_local_id, tile.local_id);
+    write(tile.properties, elem);
+    if
+        constexpr(std::is_same_v<Tile, Image_collection::Tile>)
+            write(tile.image, elem.add(image));
+    // if (auto cs{tile.collision_shape})
+    //     write(*cs, elem.add(object_layer));
+    write(tile.animation, elem);
+}
+
 void write(const Map::Tile_set& ts, Xml::Element elem)
 {
     std::visit(
@@ -149,6 +165,8 @@ void write(const Map::Tile_set& ts, Xml::Element elem)
             if
                 constexpr(std::is_same_v<std::decay_t<decltype(ts)>, Tile_set>)
                     write(ts.image, elem.add(image));
+            for (const auto& tile : ts.tiles)
+                write(tile, elem.add(tile_set_tile));
         },
         ts);
 }
