@@ -5,6 +5,7 @@
 #include <string_view>
 #include <type_traits>
 #include <boost/lexical_cast.hpp>
+#include <type_safe/constrained_type.hpp>
 #include <type_safe/strong_typedef.hpp>
 #include <tmxpp/exceptions.hpp>
 #include <tmxpp/impl/Xml.hpp>
@@ -33,6 +34,12 @@ template <class T, class Phantom>
 std::string to_string(type_safe::strong_typedef<Phantom, T> x)
 {
     return to_string(get(x));
+}
+
+template <class T, class C, class V>
+std::string to_string(type_safe::constrained_type<T, C, V> x)
+{
+    return to_string(x.get_value());
 }
 
 template <

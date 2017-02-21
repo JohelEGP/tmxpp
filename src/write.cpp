@@ -184,6 +184,73 @@ void write(const Map::Tile_set& ts, Xml::Element elem)
     std::visit([elem](const auto& ts) { map_tile_set_visitor(ts, elem); }, ts);
 }
 
+// Map::Layer ------------------------------------------------------------------
+
+void write(Object_layer::Draw_order do_, Xml::Element layer)
+{
+    layer.add(object_layer_draw_order, [do_] {
+        switch (do_) {
+        case Object_layer::Draw_order::top_down:
+            return object_layer_draw_order_top_down;
+        case Object_layer::Draw_order::index:
+            return object_layer_draw_order_index;
+        default: throw Exception{""};
+        }
+    }());
+}
+
+void write(Offset o, Xml::Element layer)
+{
+    if (o == Offset{})
+        return;
+
+    add(layer, offset_x, o.x);
+    add(layer, offset_y, o.y);
+}
+
+template <class Layer>
+void layer_visitor(const Layer& l, Xml::Element elem)
+{
+    // clang-format off
+    if constexpr(std::is_same_v<Layer, Object_layer>) {
+        if (auto c{l.color})
+            add(elem, object_layer_color, *c);
+        write(l.draw_order, elem);
+    }
+    add(elem, layer_name, l.name);
+    if (l.opacity != Unit_interval{1})
+        add(elem, layer_opacity, l.opacity);
+    if (!l.visible)
+        add(elem, layer_visible, "0");
+    write(l.offset, elem);
+    if constexpr(std::is_same_v<Layer, Image_layer>)
+        if (auto img{l.image})
+            write(*img, elem.add(image));
+    write(l.properties, elem);
+    // clang-format on
+}
+
+void write(const Map::Layer& l, Xml::Element map)
+{
+    std::visit(
+        [map](const auto& l) {
+            auto elem{map.add([] {
+                using Layer = std::decay_t<decltype(l)>;
+                // clang-format off
+                if constexpr(std::is_same_v<Layer, Tile_layer>)
+                    return tile_layer;
+                if constexpr(std::is_same_v<Layer, Object_layer>)
+                    return object_layer;
+                if constexpr(std::is_same_v<Layer, Image_layer>)
+                    return image_layer;
+                // clang-format on
+            }())};
+
+            layer_visitor(l, elem);
+        },
+        l);
+}
+
 // Map -------------------------------------------------------------------------
 
 void write(Map::Render_order ro, Xml::Element map)
@@ -263,6 +330,12 @@ void write(const Map::Tile_sets& tses, Xml::Element map)
         write(ts, map.add(tile_set));
 }
 
+void write(const Map::Layers& ls, Xml::Element map)
+{
+    for (const auto& l : ls)
+        write(l, map);
+}
+
 void write(const Map& map, Xml::Element elem)
 {
     add(elem, map_version, map.version);
@@ -274,6 +347,7 @@ void write(const Map& map, Xml::Element elem)
     add(elem, map_next_unique_id, map.next_unique_id);
     write(map.properties, elem);
     write(map.tile_sets, elem);
+    write(map.layers, elem);
 }
 
 } // namespace
