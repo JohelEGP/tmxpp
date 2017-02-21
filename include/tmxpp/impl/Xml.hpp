@@ -139,11 +139,10 @@ public:
         // Effects: Adds an `Attribute` with the given `name` and `value`.
         void add(Attribute::Name name, Attribute::Value value) const
         {
-            Expects(!get(value).empty());
-
             auto doc{elem->document()};
 
-            value = Attribute::Value{doc->allocate_string(get(value))};
+            if (!get(value).empty())
+                value = Attribute::Value{doc->allocate_string(get(value))};
 
             elem->append_attribute(
                 doc->allocate_attribute(get(name), get(value)));
