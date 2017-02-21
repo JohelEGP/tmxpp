@@ -262,17 +262,6 @@ Tile_set read_tile_set(Xml::Element tile_set, Tile_id first_global_id, File tsx)
         read_tiles(tile_set)};
 }
 
-Tile_set read_tile_set(Xml::Element tile_set)
-{
-    auto first_global_id{read_first_global_id(tile_set)};
-    auto tsx{read_tsx(tile_set)};
-
-    if (tsx.empty())
-        return read_tile_set(tile_set, first_global_id, tsx);
-
-    return tmxpp::read_tile_set(first_global_id, std::move(tsx));
-}
-
 } // namespace tile_set
 
 namespace image_collection {
@@ -302,17 +291,6 @@ Image_collection read_image_collection(
             read_tile_offset(image_collection),
             read_properties(image_collection),
             read_tiles(image_collection)};
-}
-
-Image_collection read_image_collection(Xml::Element image_collection)
-{
-    auto first_global_id{read_first_global_id(image_collection)};
-    auto tsx{read_tsx(image_collection)};
-
-    if (tsx.empty())
-        return read_image_collection(image_collection, first_global_id, tsx);
-
-    return tmxpp::read_image_collection(first_global_id, std::move(tsx));
 }
 
 } // namespace image_collection
