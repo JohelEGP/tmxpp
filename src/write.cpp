@@ -88,6 +88,25 @@ void write(const Image& img, Xml::Element elem)
         write(*sz, elem);
 }
 
+// Animation -------------------------------------------------------------------
+
+void write(Frame f, Xml::Element elem)
+{
+    add(elem, frame_local_id, f.local_id);
+    add(elem, frame_duration, f.duration.count());
+}
+
+void write(const Animation& anim, Xml::Element parent)
+{
+    if (anim.empty())
+        return;
+
+    auto elem{parent.add(animation)};
+
+    for (const auto& f : anim)
+        write(f, elem.add(frame));
+}
+
 // Map::Tile_set ---------------------------------------------------------------
 
 void write_tile(Offset o, Xml::Element parent)
