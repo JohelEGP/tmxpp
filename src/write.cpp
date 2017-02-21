@@ -1,5 +1,6 @@
 #include <fstream>
 #include <string>
+#include <type_traits>
 #include <variant>
 #include <boost/hana/functional/overload.hpp>
 #include <tmxpp.hpp>
@@ -75,6 +76,49 @@ void write(const Properties& ps, Xml::Element parent)
         write(p, elem.add(property));
 }
 
+// Map::Tile_set ---------------------------------------------------------------
+
+void write_tile(Offset o, Xml::Element parent)
+{
+    if (o == Offset{})
+        return;
+
+    auto elem{parent.add(tile_offset)};
+
+    add(elem, tile_offset_x, o.x);
+    add(elem, tile_offset_y, o.y);
+}
+
+void write(const Map::Tile_set& ts, Xml::Element elem)
+{
+    std::visit(
+        [elem](const auto& ts) {
+            add(elem, tile_set_first_global_id, ts.first_global_id);
+            if (!ts.tsx.empty())
+                add(elem, tile_set_tsx, ts.tsx.string());
+            add(elem, tile_set_name, ts.name);
+            if
+                constexpr(std::is_same_v<std::decay_t<decltype(ts)>, Tile_set>)
+                {
+                    write_tile(ts.tile_size, elem);
+                    if (ts.spacing != Pixel{0})
+                        add(elem, tile_set_spacing, ts.spacing);
+                    if (ts.margin != Pixel{0})
+                        add(elem, tile_set_margin, ts.margin);
+                    add(elem, tile_set_tile_count, ts.size.w * ts.size.h);
+                    add(elem, tile_set_columns, ts.size.w);
+                }
+            else {
+                write_tile(ts.max_tile_size, elem);
+                add(elem, tile_set_tile_count, ts.tile_count);
+                add(elem, tile_set_columns, ts.columns);
+            };
+            write_tile(ts.tile_offset, elem);
+            write(ts.properties, elem);
+        },
+        ts);
+}
+
 // Map -------------------------------------------------------------------------
 
 void write(Map::Render_order ro, Xml::Element map)
@@ -148,6 +192,12 @@ void write(
         orient);
 }
 
+void write(const Map::Tile_sets& tses, Xml::Element map)
+{
+    for (const auto& ts : tses)
+        write(ts, map.add(tile_set));
+}
+
 void write(const Map& map, Xml::Element elem)
 {
     add(elem, map_version, map.version);
@@ -158,6 +208,7 @@ void write(const Map& map, Xml::Element elem)
         add(elem, map_background, *bg);
     add(elem, map_next_unique_id, map.next_unique_id);
     write(map.properties, elem);
+    write(map.tile_sets, elem);
 }
 
 } // namespace
