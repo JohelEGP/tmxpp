@@ -317,10 +317,34 @@ Image_collection read_image_collection(Xml::Element image_collection)
 
 } // namespace image_collection
 
+// Requires: The tile set is internal or a TSX.
+// Returns: `true` if the `Element` represents a `Tile_set`, and `false` if it
+//          represents an `Image_collection`.
+bool is_tile_set(Xml::Element tile_set)
+{
+    return bool{tile_set.optional_child(tmx_info::image)};
+}
+
+Map::Tile_set read_map_tile_set(Xml::Element tile_set)
+{
+    auto first_global_id{read_first_global_id(tile_set)};
+    auto tsx{read_tsx(tile_set)};
+
+    if (tsx.empty()) {
+        if (is_tile_set(tile_set))
+            return tile_set::read_tile_set(tile_set, first_global_id, tsx);
+        return image_collection::read_image_collection(
+            tile_set, first_global_id, tsx);
+    }
+
+    return read_tsx(first_global_id, std::move(tsx));
+}
+
 } // namespace tile_set
 
 using tile_set::tile_set::read_tile_set;
 using tile_set::image_collection::read_image_collection;
+using tile_set::read_map_tile_set;
 
 namespace data {
 
@@ -655,24 +679,10 @@ Unique_id read_next_unique_id(Xml::Element map)
     return from_string<Unique_id>(value(map, map_next_unique_id));
 }
 
-// Returns: `true` if the `Element` represents a `tmxpp::Tile_set`, and `false`
-//          if it represents an `Image_collection`.
-bool is_tmxpp_tile_set(Xml::Element tile_set)
-{
-    return bool{tile_set.optional_child(tmx_info::image)};
-}
-
-Map::Tile_set read_tile_set(Xml::Element tile_set)
-{
-    if (is_tmxpp_tile_set(tile_set))
-        return impl::read_tile_set(tile_set);
-    return read_image_collection(tile_set);
-}
-
 Map::Tile_sets read_tile_sets(Xml::Element map)
 {
     return transform<Map::Tile_sets>(
-        map.children(tmx_info::tile_set), read_tile_set);
+        map.children(tmx_info::tile_set), read_map_tile_set);
 }
 
 Map::Layer read_layer(Xml::Element layer)
@@ -735,7 +745,7 @@ Map::Tile_set read_tsx(Tile_id first_global_id, File tsx)
     if (tile_set.name() != impl::tmx_info::tile_set)
         throw impl::Invalid_element{tile_set.name()};
 
-    if (impl::map::is_tmxpp_tile_set(tile_set))
+    if (impl::tile_set::is_tile_set(tile_set))
         return impl::read_tile_set(tile_set, first_global_id, std::move(tsx));
     return impl::read_image_collection(
         tile_set, first_global_id, std::move(tsx));
