@@ -76,6 +76,11 @@ public:
             elem->value(get(value));
         }
 
+        void value(std::string value) const noexcept
+        {
+            this->value(Value{elem->document()->allocate_string(value)});
+        }
+
         // Returns: An `Attribute` with the given `name`.
         // Throws: `Invalid_attribute` if there is no such `Attribute`.
         Attribute attribute(Attribute::Name name) const;
