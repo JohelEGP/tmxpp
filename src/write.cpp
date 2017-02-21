@@ -1,4 +1,6 @@
 #include <fstream>
+#include <string>
+#include <string_view>
 #include <variant>
 #include <boost/hana/functional/overload.hpp>
 #include <tmxpp.hpp>
@@ -25,6 +27,50 @@ void write_tile(pxSize sz, Xml::Element elem)
 {
     add(elem, tile_size_width, to_string(sz.w));
     add(elem, tile_size_height, to_string(sz.h));
+}
+
+// Properties ------------------------------------------------------------------
+
+void write(const Property::Value& value, Xml::Element prop)
+{
+    auto add = [=](Xml::Attribute::Value alternative, std::string_view value) {
+        prop.add(property_alternative, alternative);
+        impl::add(prop, property_value, value);
+    };
+
+    std::visit(
+        boost::hana::overload(
+            [=](int i) { add(property_alternative_int, to_string(i)); },
+            [=](double d) { add(property_alternative_double, to_string(d)); },
+            [=](bool b) {
+                add(property_alternative_bool,
+                    get(b ? property_value_true : property_value_false));
+            },
+            [=](Color c) { add(property_alternative_color, to_string(c)); },
+            [=](File f) { add(property_alternative_file, f.string()); },
+            [=](const std::string& s) {
+                prop.add(property_alternative, property_alternative_string);
+
+                if (bool is_multiline{s.find('\n') != std::string::npos})
+                    prop.value(Xml::Element::Value{s});
+                else
+                    impl::add(prop, property_value, s);
+            }),
+        value);
+}
+
+void write(const Property& p, Xml::Element elem)
+{
+    add(elem, property_name, p.name);
+    write(p.value, elem);
+}
+
+void write(const Properties& ps, Xml::Element parent)
+{
+    auto elem{parent.add(properties)};
+
+    for (const auto& p : ps)
+        write(p, elem.add(property));
 }
 
 // Map -------------------------------------------------------------------------
@@ -109,6 +155,7 @@ void write(const Map& map, Xml::Element elem)
     if (auto bg{map.background})
         add(elem, map_background, to_string(*bg));
     add(elem, map_next_unique_id, to_string(map.next_unique_id));
+    write(map.properties, elem);
 }
 
 } // namespace
