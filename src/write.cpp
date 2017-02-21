@@ -67,6 +67,9 @@ void write(const Property& p, Xml::Element elem)
 
 void write(const Properties& ps, Xml::Element parent)
 {
+    if (ps.empty())
+        return;
+
     auto elem{parent.add(properties)};
 
     for (const auto& p : ps)
