@@ -127,9 +127,10 @@ write(const Tile& tile, Xml::Element elem)
 {
     add(elem, tile_set_tile_local_id, tile.local_id);
     write(tile.properties, elem);
-    if
-        constexpr(std::is_same_v<Tile, Image_collection::Tile>)
-            write(tile.image, elem.add(image));
+    // clang-format off
+    if constexpr (std::is_same_v<Tile, Image_collection::Tile>)
+        write(tile.image, elem.add(image));
+    // clang-format on
     // if (auto cs{tile.collision_shape})
     //     write(*cs, elem.add(object_layer));
     write(tile.animation, elem);
@@ -155,17 +156,16 @@ void map_tile_set_visitor(const Tset& ts, Xml::Element elem)
     if (!ts.tsx.empty())
         add(elem, tile_set_tsx, ts.tsx.string());
     add(elem, tile_set_name, ts.name);
-    if
-        constexpr(std::is_same_v<Tset, Tile_set>)
-        {
-            write_tile(ts.tile_size, elem);
-            if (ts.spacing != Pixel{0})
-                add(elem, tile_set_spacing, ts.spacing);
-            if (ts.margin != Pixel{0})
-                add(elem, tile_set_margin, ts.margin);
-            add(elem, tile_set_tile_count, ts.size.w * ts.size.h);
-            add(elem, tile_set_columns, ts.size.w);
-        }
+    // clang-format off
+    if constexpr (std::is_same_v<Tset, Tile_set>) {
+        write_tile(ts.tile_size, elem);
+        if (ts.spacing != Pixel{0})
+            add(elem, tile_set_spacing, ts.spacing);
+        if (ts.margin != Pixel{0})
+            add(elem, tile_set_margin, ts.margin);
+        add(elem, tile_set_tile_count, ts.size.w * ts.size.h);
+        add(elem, tile_set_columns, ts.size.w);
+    }
     else {
         write_tile(ts.max_tile_size, elem);
         add(elem, tile_set_tile_count, ts.tile_count);
@@ -173,9 +173,9 @@ void map_tile_set_visitor(const Tset& ts, Xml::Element elem)
     };
     write_tile(ts.tile_offset, elem);
     write(ts.properties, elem);
-    if
-        constexpr(std::is_same_v<Tset, Tile_set>)
+    if constexpr (std::is_same_v<Tset, Tile_set>)
             write(ts.image, elem.add(image));
+    // clang-format on
     write(ts.tiles, elem);
 }
 
@@ -212,7 +212,7 @@ template <class Layer>
 void layer_visitor(const Layer& l, Xml::Element elem)
 {
     // clang-format off
-    if constexpr(std::is_same_v<Layer, Object_layer>) {
+    if constexpr (std::is_same_v<Layer, Object_layer>) {
         if (auto c{l.color})
             add(elem, object_layer_color, *c);
         write(l.draw_order, elem);
@@ -223,7 +223,7 @@ void layer_visitor(const Layer& l, Xml::Element elem)
     if (!l.visible)
         add(elem, layer_visible, "0");
     write(l.offset, elem);
-    if constexpr(std::is_same_v<Layer, Image_layer>)
+    if constexpr (std::is_same_v<Layer, Image_layer>)
         if (auto img{l.image})
             write(*img, elem.add(image));
     write(l.properties, elem);
@@ -237,11 +237,11 @@ void write(const Map::Layer& l, Xml::Element map)
             auto elem{map.add([] {
                 using Layer = std::decay_t<decltype(l)>;
                 // clang-format off
-                if constexpr(std::is_same_v<Layer, Tile_layer>)
+                if constexpr (std::is_same_v<Layer, Tile_layer>)
                     return tile_layer;
-                if constexpr(std::is_same_v<Layer, Object_layer>)
+                if constexpr (std::is_same_v<Layer, Object_layer>)
                     return object_layer;
-                if constexpr(std::is_same_v<Layer, Image_layer>)
+                if constexpr (std::is_same_v<Layer, Image_layer>)
                     return image_layer;
                 // clang-format on
             }())};
