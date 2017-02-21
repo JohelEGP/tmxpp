@@ -17,7 +17,8 @@ namespace {
 
 using namespace tmx_info;
 
-void write(iSize sz, Xml::Element elem)
+template <class Number>
+void write(Size<Number> sz, Xml::Element elem)
 {
     add(elem, size_width, sz.w);
     add(elem, size_height, sz.h);
@@ -76,6 +77,17 @@ void write(const Properties& ps, Xml::Element parent)
         write(p, elem.add(property));
 }
 
+// Image -----------------------------------------------------------------------
+
+void write(const Image& img, Xml::Element elem)
+{
+    add(elem, image_source, img.source.string());
+    if (auto trans{img.transparent})
+        add(elem, image_transparent, *trans);
+    if (auto sz{img.size})
+        write(*sz, elem);
+}
+
 // Map::Tile_set ---------------------------------------------------------------
 
 void write_tile(Offset o, Xml::Element parent)
@@ -115,6 +127,9 @@ void write(const Map::Tile_set& ts, Xml::Element elem)
             };
             write_tile(ts.tile_offset, elem);
             write(ts.properties, elem);
+            if
+                constexpr(std::is_same_v<std::decay_t<decltype(ts)>, Tile_set>)
+                    write(ts.image, elem.add(image));
         },
         ts);
 }
