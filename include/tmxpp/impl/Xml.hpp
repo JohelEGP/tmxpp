@@ -71,6 +71,11 @@ public:
             return Value{elem->value_ref()};
         }
 
+        void value(Value value) const noexcept
+        {
+            elem->value(get(value));
+        }
+
         // Returns: An `Attribute` with the given `name`.
         // Throws: `Invalid_attribute` if there is no such `Attribute`.
         Attribute attribute(Attribute::Name name) const;
