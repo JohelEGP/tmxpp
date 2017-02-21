@@ -218,6 +218,8 @@ void layer_visitor(const Layer& l, Xml::Element elem)
         write(l.draw_order, elem);
     }
     add(elem, layer_name, l.name);
+    if constexpr (std::is_same_v<Layer, Tile_layer>)
+        write(l.size, elem);
     if (l.opacity != Unit_interval{1})
         add(elem, layer_opacity, l.opacity);
     if (!l.visible)

@@ -3,10 +3,12 @@
 
 #include <tmxpp/Data.hpp>
 #include <tmxpp/Layer.hpp>
+#include <tmxpp/Size.hpp>
 
 namespace tmxpp {
 
 struct Tile_layer : Layer {
+    iSize size; // In tiles.
     Data data;
 };
 
