@@ -79,7 +79,7 @@ constexpr Xml::Attribute::Value data_compression_zlib{"zlib"sv};
 
 constexpr Xml::Element::Name object_layer{"objectgroup"sv};
 constexpr Xml::Attribute::Name object_layer_color{"color"sv};
-constexpr Xml::Attribute::Name object_layer_draw_order{"offsety"sv};
+constexpr Xml::Attribute::Name object_layer_draw_order{"draworder"sv};
 constexpr Xml::Attribute::Value object_layer_draw_order_top_down{"topdown"sv};
 constexpr Xml::Attribute::Value object_layer_draw_order_index{"index"sv};
 
