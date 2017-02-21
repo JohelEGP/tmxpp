@@ -1,5 +1,6 @@
 #include <optional>
 #include <string>
+#include <utility>
 #include <tmxpp.hpp>
 #include <tmxpp/exceptions.hpp>
 #include <tmxpp/impl/Xml.hpp>
@@ -250,19 +251,26 @@ Tile_set::Tiles read_tiles(Xml::Element tile_set)
         tile_set.children(tile_set_tile), read_tile);
 }
 
+Tile_set read_tile_set(Xml::Element tile_set, Tile_id first_global_id, File tsx)
+{
+    return {
+        first_global_id,           std::move(tsx),
+        read_name(tile_set),       read_tile_size(tile_set),
+        read_spacing(tile_set),    read_margin(tile_set),
+        read_size(tile_set),       read_tile_offset(tile_set),
+        read_properties(tile_set), read_image(tile_set.child(tmx_info::image)),
+        read_tiles(tile_set)};
+}
+
 Tile_set read_tile_set(Xml::Element tile_set)
 {
-    return {read_first_global_id(tile_set),
-            read_tsx(tile_set),
-            read_name(tile_set),
-            read_tile_size(tile_set),
-            read_spacing(tile_set),
-            read_margin(tile_set),
-            read_size(tile_set),
-            read_tile_offset(tile_set),
-            read_properties(tile_set),
-            read_image(tile_set.child(tmx_info::image)),
-            read_tiles(tile_set)};
+    auto first_global_id{read_first_global_id(tile_set)};
+    auto tsx{read_tsx(tile_set)};
+
+    if (tsx.empty())
+        return read_tile_set(tile_set, first_global_id, tsx);
+
+    return tmxpp::read_tile_set(first_global_id, std::move(tsx));
 }
 
 } // namespace tile_set
@@ -282,10 +290,11 @@ Image_collection::Tiles read_tiles(Xml::Element image_collection)
         image_collection.children(tile_set_tile), read_tile);
 }
 
-Image_collection read_image_collection(Xml::Element image_collection)
+Image_collection read_image_collection(
+    Xml::Element image_collection, Tile_id first_global_id, File tsx)
 {
-    return {read_first_global_id(image_collection),
-            read_tsx(image_collection),
+    return {first_global_id,
+            std::move(tsx),
             read_name(image_collection),
             read_tile_size(image_collection),
             read_tile_count(image_collection),
@@ -293,6 +302,17 @@ Image_collection read_image_collection(Xml::Element image_collection)
             read_tile_offset(image_collection),
             read_properties(image_collection),
             read_tiles(image_collection)};
+}
+
+Image_collection read_image_collection(Xml::Element image_collection)
+{
+    auto first_global_id{read_first_global_id(image_collection)};
+    auto tsx{read_tsx(image_collection)};
+
+    if (tsx.empty())
+        return read_image_collection(image_collection, first_global_id, tsx);
+
+    return tmxpp::read_image_collection(first_global_id, std::move(tsx));
 }
 
 } // namespace image_collection
@@ -706,8 +726,44 @@ Map read_tmx(gsl::not_null<gsl::czstring<>> path)
     throw impl::Invalid_element{map.name()};
 }
 
-Map::Tile_set read_tsx(Tile_id first_global_id, File tsx);
-Tile_set read_tile_set(Tile_id first_global_id, File tsx);
-Image_collection read_image_collection(Tile_id first_global_id, File tsx);
+Map::Tile_set read_tsx(Tile_id first_global_id, File tsx)
+{
+    const impl::Xml xml{tsx.string().c_str()};
+
+    auto tile_set{xml.root()};
+
+    if (tile_set.name() != impl::tmx_info::tile_set)
+        throw impl::Invalid_element{tile_set.name()};
+
+    if (impl::map::is_tmxpp_tile_set(tile_set))
+        return impl::read_tile_set(tile_set, first_global_id, std::move(tsx));
+    return impl::read_image_collection(
+        tile_set, first_global_id, std::move(tsx));
+}
+
+Tile_set read_tile_set(Tile_id first_global_id, File tsx)
+{
+    const impl::Xml xml{tsx.string().c_str()};
+
+    auto tile_set{xml.root()};
+
+    if (tile_set.name() == impl::tmx_info::tile_set)
+        return impl::read_tile_set(tile_set, first_global_id, std::move(tsx));
+
+    throw impl::Invalid_element{tile_set.name()};
+}
+
+Image_collection read_image_collection(Tile_id first_global_id, File tsx)
+{
+    const impl::Xml xml{tsx.string().c_str()};
+
+    auto image_collection{xml.root()};
+
+    if (image_collection.name() == impl::tmx_info::tile_set)
+        return impl::read_image_collection(
+            image_collection, first_global_id, std::move(tsx));
+
+    throw impl::Invalid_element{image_collection.name()};
+}
 
 } // namespace tmxpp
