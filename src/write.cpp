@@ -7,7 +7,6 @@
 #include <tmxpp/exceptions.hpp>
 #include <tmxpp/impl/Xml.hpp>
 #include <tmxpp/impl/tmx_info.hpp>
-#include <tmxpp/impl/to_string_color.hpp>
 #include <tmxpp/impl/write_utility.hpp>
 
 namespace tmxpp {

@@ -8,6 +8,7 @@
 #include <type_safe/strong_typedef.hpp>
 #include <tmxpp/exceptions.hpp>
 #include <tmxpp/impl/Xml.hpp>
+#include <tmxpp/impl/to_string_color.hpp>
 
 namespace tmxpp::impl {
 
