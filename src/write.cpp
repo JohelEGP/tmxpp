@@ -120,11 +120,11 @@ void write_tile(Offset o, Xml::Element parent)
     add(elem, tile_offset_y, o.y);
 }
 
-template <
-    class Tile, class = std::enable_if_t<
-                    std::is_same_v<Tile, Tile_set::Tile> ||
-                    std::is_same_v<Tile, Image_collection::Tile>>>
-void write(const Tile& tile, Xml::Element elem)
+template <class Tile>
+std::enable_if_t<
+    std::is_same_v<Tile, Tile_set::Tile> ||
+    std::is_same_v<Tile, Image_collection::Tile>>
+write(const Tile& tile, Xml::Element elem)
 {
     add(elem, tile_set_tile_local_id, tile.local_id);
     write(tile.properties, elem);
@@ -136,39 +136,53 @@ void write(const Tile& tile, Xml::Element elem)
     write(tile.animation, elem);
 }
 
+template <class Tiles>
+std::enable_if_t<
+    std::is_same_v<Tiles, Tile_set::Tiles> ||
+    std::is_same_v<Tiles, Image_collection::Tiles>>
+write(const Tiles& ts, Xml::Element parent)
+{
+    if (ts.empty())
+        return;
+
+    for (const auto& t : ts)
+        write(t, parent.add(tile_set_tile));
+}
+
+template <class Tset>
+void map_tile_set_visitor(const Tset& ts, Xml::Element elem)
+{
+    add(elem, tile_set_first_global_id, ts.first_global_id);
+    if (!ts.tsx.empty())
+        add(elem, tile_set_tsx, ts.tsx.string());
+    add(elem, tile_set_name, ts.name);
+    if
+        constexpr(std::is_same_v<Tset, Tile_set>)
+        {
+            write_tile(ts.tile_size, elem);
+            if (ts.spacing != Pixel{0})
+                add(elem, tile_set_spacing, ts.spacing);
+            if (ts.margin != Pixel{0})
+                add(elem, tile_set_margin, ts.margin);
+            add(elem, tile_set_tile_count, ts.size.w * ts.size.h);
+            add(elem, tile_set_columns, ts.size.w);
+        }
+    else {
+        write_tile(ts.max_tile_size, elem);
+        add(elem, tile_set_tile_count, ts.tile_count);
+        add(elem, tile_set_columns, ts.columns);
+    };
+    write_tile(ts.tile_offset, elem);
+    write(ts.properties, elem);
+    if
+        constexpr(std::is_same_v<Tset, Tile_set>)
+            write(ts.image, elem.add(image));
+    write(ts.tiles, elem);
+}
+
 void write(const Map::Tile_set& ts, Xml::Element elem)
 {
-    std::visit(
-        [elem](const auto& ts) {
-            add(elem, tile_set_first_global_id, ts.first_global_id);
-            if (!ts.tsx.empty())
-                add(elem, tile_set_tsx, ts.tsx.string());
-            add(elem, tile_set_name, ts.name);
-            if
-                constexpr(std::is_same_v<std::decay_t<decltype(ts)>, Tile_set>)
-                {
-                    write_tile(ts.tile_size, elem);
-                    if (ts.spacing != Pixel{0})
-                        add(elem, tile_set_spacing, ts.spacing);
-                    if (ts.margin != Pixel{0})
-                        add(elem, tile_set_margin, ts.margin);
-                    add(elem, tile_set_tile_count, ts.size.w * ts.size.h);
-                    add(elem, tile_set_columns, ts.size.w);
-                }
-            else {
-                write_tile(ts.max_tile_size, elem);
-                add(elem, tile_set_tile_count, ts.tile_count);
-                add(elem, tile_set_columns, ts.columns);
-            };
-            write_tile(ts.tile_offset, elem);
-            write(ts.properties, elem);
-            if
-                constexpr(std::is_same_v<std::decay_t<decltype(ts)>, Tile_set>)
-                    write(ts.image, elem.add(image));
-            for (const auto& tile : ts.tiles)
-                write(tile, elem.add(tile_set_tile));
-        },
-        ts);
+    std::visit([elem](const auto& ts) { map_tile_set_visitor(ts, elem); }, ts);
 }
 
 // Map -------------------------------------------------------------------------
