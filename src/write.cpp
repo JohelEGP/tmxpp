@@ -7,6 +7,7 @@
 #include <tmxpp/exceptions.hpp>
 #include <tmxpp/impl/Xml.hpp>
 #include <tmxpp/impl/tmx_info.hpp>
+#include <tmxpp/impl/to_string_flipped_global_ids.hpp>
 #include <tmxpp/impl/write_utility.hpp>
 
 namespace tmxpp {
@@ -184,6 +185,43 @@ void write(const Map::Tile_set& ts, Xml::Element elem)
     std::visit([elem](const auto& ts) { map_tile_set_visitor(ts, elem); }, ts);
 }
 
+// Data ------------------------------------------------------------------------
+
+void write(Data::Encoding e, Xml::Element data)
+{
+    data.add(data_encoding, [e] {
+        switch (e) {
+        case Data::Encoding::csv: return data_encoding_csv;
+        case Data::Encoding::base64: return data_encoding_base64;
+        default: throw Exception{""};
+        }
+    }());
+}
+
+void write(Data::Compression c, Xml::Element data)
+{
+    if (c == Data::Compression::none)
+        return;
+
+    data.add(data_compression, [c] {
+        switch (c) {
+        case Data::Compression::zlib: return data_compression_zlib;
+        default: throw Exception{""};
+        }
+    }());
+}
+
+void write(const Data& d, Xml::Element elem, iSize size)
+{
+    if (d.encoding != Data::Encoding::csv ||
+        d.compression != Data::Compression::none)
+        throw Exception{"Can only handle csv-encoded data."};
+
+    write(d.encoding, elem);
+    write(d.compression, elem);
+    elem.value(to_string(d.flipped_global_ids, size));
+}
+
 // Map::Layer ------------------------------------------------------------------
 
 void write(Object_layer::Draw_order do_, Xml::Element layer)
@@ -229,6 +267,8 @@ void layer_visitor(const Layer& l, Xml::Element elem)
         if (auto img{l.image})
             write(*img, elem.add(image));
     write(l.properties, elem);
+    if constexpr (std::is_same_v<Layer, Tile_layer>)
+        write(l.data, elem.add(data), l.size);
     // clang-format on
 }
 
