@@ -16,6 +16,11 @@ private:
     std::string what_;
 };
 
+class Invalid_argument : public Exception {
+public:
+    using Exception::Exception;
+};
+
 } // namespace tmxpp
 
 #endif // TMXPP_EXCEPTIONS_HPP
