@@ -27,8 +27,9 @@ void non_empty_add(
         add(elem, name, value);
 }
 
+template <class File_, class = std::enable_if_t<std::is_same_v<File_, File>>>
 void non_empty_add(
-    Xml::Element elem, Xml::Attribute::Name name, const File& value)
+    Xml::Element elem, Xml::Attribute::Name name, const File_& value)
 {
     if (!value.empty())
         add(elem, name, value.string());

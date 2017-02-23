@@ -8,6 +8,7 @@
 #include <tmxpp/impl/Xml.hpp>
 #include <tmxpp/impl/tmx_info.hpp>
 #include <tmxpp/impl/to_string_flipped_global_ids.hpp>
+#include <tmxpp/impl/write_poly.hpp>
 #include <tmxpp/impl/write_utility.hpp>
 
 namespace tmxpp {
@@ -117,6 +118,8 @@ void write_tile(Offset o, Xml::Element parent)
     add(elem, tile_offset_y, o.y);
 }
 
+void write(const Object_layer& l, Xml::Element elem);
+
 template <class Tile>
 std::enable_if_t<
     std::is_same_v<Tile, Tile_set::Tile> ||
@@ -129,8 +132,8 @@ write(const Tile& tile, Xml::Element elem)
     if constexpr (std::is_same_v<Tile, Image_collection::Tile>)
         write(tile.image, elem.add(image));
     // clang-format on
-    // if (auto cs{tile.collision_shape})
-    //     write(*cs, elem.add(object_layer));
+    if (const auto& cs{tile.collision_shape})
+        write(*cs, elem.add(object_layer));
     write(tile.animation, elem);
 }
 
@@ -216,6 +219,47 @@ void write(const Data& d, Xml::Element elem, iSize size)
     elem.value(to_string(d.flipped_global_ids, size));
 }
 
+// Object ----------------------------------------------------------------------
+
+void write(Point p, Xml::Element obj)
+{
+    add(obj, point_x, p.x);
+    add(obj, point_y, p.y);
+}
+
+void write_object(pxSize sz, Xml::Element obj)
+{
+    non_default_add(obj, size_width, sz.w);
+    non_default_add(obj, size_height, sz.h);
+}
+
+void write(const Object::Shape& s, Xml::Element obj)
+{
+    std::visit(
+        boost::hana::overload(
+            [obj](Object::Rectangle r) { write_object(r.size, obj); },
+            [obj](Object::Ellipse e) {
+                write_object(e.size, obj);
+                obj.add(object_ellipse);
+            },
+            [obj](const auto& poly) { write(poly, obj); }),
+        s);
+}
+
+void write(const Object& obj, Xml::Element elem)
+{
+    add(elem, object_unique_id, obj.unique_id);
+    non_empty_add(elem, object_name, obj.name);
+    non_empty_add(elem, object_type, obj.type);
+    non_default_add(elem, object_global_id, obj.global_id);
+    write(obj.position, elem);
+    write(obj.shape, elem);
+    non_default_add(elem, object_clockwise_rotation, obj.clockwise_rotation);
+    if (!obj.visible)
+        add(elem, object_visible, "0");
+    write(obj.properties, elem);
+}
+
 // Map::Layer ------------------------------------------------------------------
 
 void write(Object_layer::Draw_order do_, Xml::Element layer)
@@ -240,6 +284,12 @@ void write(Offset o, Xml::Element layer)
     add(layer, offset_y, o.y);
 }
 
+void write(const Object_layer::Objects& objs, Xml::Element elem)
+{
+    for (const auto& obj : objs)
+        write(obj, elem.add(object));
+}
+
 template <class Layer>
 void layer_visitor(const Layer& l, Xml::Element elem)
 {
@@ -261,7 +311,14 @@ void layer_visitor(const Layer& l, Xml::Element elem)
     write(l.properties, elem);
     if constexpr (std::is_same_v<Layer, Tile_layer>)
         write(l.data, elem.add(data), l.size);
+    if constexpr (std::is_same_v<Layer, Object_layer>)
+        write(l.objects, elem);
     // clang-format on
+}
+
+void write(const Object_layer& l, Xml::Element elem)
+{
+    layer_visitor(l, elem);
 }
 
 void write(const Map::Layer& l, Xml::Element map)
