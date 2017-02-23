@@ -458,6 +458,16 @@ void write(const Map& map, Xml::Element elem)
     write(map.layers, elem);
 }
 
+void write(const Xml& xml, gsl::not_null<gsl::czstring<>> path)
+{
+    std::ofstream ofs{path};
+
+    if (!ofs)
+        throw Exception{"Output path presented problems."};
+
+    ofs << xml;
+}
+
 } // namespace impl
 
 void write(const Map& map, gsl::not_null<gsl::czstring<>> path)
@@ -466,7 +476,7 @@ void write(const Map& map, gsl::not_null<gsl::czstring<>> path)
 
     impl::write(map, tmx.root());
 
-    std::ofstream{path} << tmx;
+    write(tmx, path);
 }
 
 template <class Tile_set_>
@@ -484,7 +494,7 @@ write(const Tile_set_& ts)
 
     impl::write(ts, tsx.root(), impl::Tile_set_type::tsx);
 
-    std::ofstream{ts.tsx.string()} << tsx;
+    write(tsx, ts.tsx.string().c_str());
 }
 
 } // namespace tmxpp
