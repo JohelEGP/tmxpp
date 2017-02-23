@@ -42,7 +42,9 @@ void write(const Property::Value& value, Xml::Element prop)
     std::visit(
         boost::hana::overload(
             [=](int i) { add(property_alternative_int, i); },
-            [=](double d) { add(property_alternative_double, d); },
+            [=](double d) {
+                add(property_alternative_double, to_string<double>(d));
+            },
             [=](bool b) {
                 add(property_alternative_bool,
                     get(b ? property_value_true : property_value_false));
@@ -50,8 +52,6 @@ void write(const Property::Value& value, Xml::Element prop)
             [=](Color c) { add(property_alternative_color, c); },
             [=](File f) { add(property_alternative_file, f.string()); },
             [=](const std::string& s) {
-                prop.add(property_alternative, property_alternative_string);
-
                 if (bool is_multiline{s.find('\n') != std::string::npos})
                     prop.value(Xml::Element::Value{s});
                 else
@@ -264,10 +264,11 @@ void write(const Object& obj, Xml::Element elem)
 
 void write(Object_layer::Draw_order do_, Xml::Element layer)
 {
+    if (do_ == Object_layer::Draw_order::top_down)
+        return;
+
     layer.add(object_layer_draw_order, [do_] {
         switch (do_) {
-        case Object_layer::Draw_order::top_down:
-            return object_layer_draw_order_top_down;
         case Object_layer::Draw_order::index:
             return object_layer_draw_order_index;
         default: throw Exception{""};
@@ -298,12 +299,12 @@ void layer_visitor(const Layer& l, Xml::Element elem)
         add(elem, object_layer_color, l.color);
         write(l.draw_order, elem);
     }
-    add(elem, layer_name, l.name);
+    non_empty_add(elem, layer_name, l.name);
     if constexpr (std::is_same_v<Layer, Tile_layer>)
         write(l.size, elem);
-    non_default_add(elem, layer_opacity, l.opacity, Default{Unit_interval{1}});
     if (!l.visible)
         add(elem, layer_visible, "0");
+    non_default_add(elem, layer_opacity, l.opacity, Default{Unit_interval{1}});
     write(l.offset, elem);
     if constexpr (std::is_same_v<Layer, Image_layer>)
         if (auto img{l.image})
