@@ -1,17 +1,15 @@
 #ifndef TMXPP_DEGREES_HPP
 #define TMXPP_DEGREES_HPP
 
-#include <type_safe/strong_typedef.hpp>
+#include <tmxpp/Strong_typedef.hpp>
 
 namespace tmxpp {
 
 class Degrees
-    : public type_safe::strong_typedef<Degrees, double>,
-      public type_safe::strong_typedef_op::equality_comparison<Degrees, bool>,
-      public type_safe::strong_typedef_op::relational_comparison<Degrees, bool>,
-      public type_safe::strong_typedef_op::floating_point_arithmetic<Degrees> {
+    : public Strong_typedef<double, Degrees>,
+      type_safe::strong_typedef_op::floating_point_arithmetic<Degrees> {
 public:
-    using strong_typedef::strong_typedef;
+    using Strong_typedef::Strong_typedef;
 };
 
 } // namespace tmxpp

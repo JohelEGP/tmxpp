@@ -1,9 +1,9 @@
-#ifndef TMXPP_IMPL_STRONG_TYPEDEF_HPP
-#define TMXPP_IMPL_STRONG_TYPEDEF_HPP
+#ifndef TMXPP_STRONG_TYPEDEF_HPP
+#define TMXPP_STRONG_TYPEDEF_HPP
 
 #include <type_safe/strong_typedef.hpp>
 
-namespace tmxpp::impl {
+namespace tmxpp {
 
 template <class T, class Phantom>
 class Strong_typedef : public type_safe::strong_typedef<Phantom, T>,
@@ -15,6 +15,6 @@ public:
     using type_safe::strong_typedef<Phantom, T>::strong_typedef;
 };
 
-} // namespace tmxpp::impl
+} // namespace tmxpp
 
-#endif // TMXPP_IMPL_STRONG_TYPEDEF_HPP
+#endif // TMXPP_STRONG_TYPEDEF_HPP

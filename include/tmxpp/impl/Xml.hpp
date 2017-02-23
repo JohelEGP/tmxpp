@@ -17,8 +17,8 @@
 #include <rapidxml_iterators.hpp>
 #include <rapidxml_print.hpp>
 #include <rapidxml_utils.hpp>
+#include <tmxpp/Strong_typedef.hpp>
 #include <tmxpp/exceptions.hpp>
-#include <tmxpp/impl/Strong_typedef.hpp>
 
 namespace tmxpp::impl {
 
