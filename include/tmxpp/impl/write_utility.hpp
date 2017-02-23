@@ -2,6 +2,7 @@
 #define TMXPP_IMPL_WRITE_UTILITY_HPP
 
 #include <optional>
+#include <sstream>
 #include <string>
 #include <string_view>
 #include <type_traits>
@@ -45,6 +46,13 @@ catch (const boost::bad_lexical_cast& e) {
     throw Exception{
         std::string{"Could not convert Arithmetic to std::string. "} +
         e.what()};
+}
+
+std::string to_string(double d)
+{
+    std::stringstream ss;
+    ss << d;
+    return ss.str();
 }
 
 template <class T, class Phantom>
