@@ -13,7 +13,6 @@
 namespace tmxpp {
 
 namespace impl {
-namespace {
 
 using namespace tmx_info;
 
@@ -82,10 +81,8 @@ void write(const Properties& ps, Xml::Element parent)
 void write(const Image& img, Xml::Element elem)
 {
     add(elem, image_source, img.source.string());
-    if (auto trans{img.transparent})
-        add(elem, image_transparent, *trans);
-    if (auto sz{img.size})
-        write(*sz, elem);
+    add(elem, image_transparent, img.transparent);
+    write(img.size, elem);
 }
 
 // Animation -------------------------------------------------------------------
@@ -154,16 +151,13 @@ template <class Tset>
 void map_tile_set_visitor(const Tset& ts, Xml::Element elem)
 {
     add(elem, tile_set_first_global_id, ts.first_global_id);
-    if (!ts.tsx.empty())
-        add(elem, tile_set_tsx, ts.tsx.string());
+    non_empty_add(elem, tile_set_tsx, ts.tsx);
     add(elem, tile_set_name, ts.name);
     // clang-format off
     if constexpr (std::is_same_v<Tset, Tile_set>) {
         write_tile(ts.tile_size, elem);
-        if (ts.spacing != Pixel{0})
-            add(elem, tile_set_spacing, ts.spacing);
-        if (ts.margin != Pixel{0})
-            add(elem, tile_set_margin, ts.margin);
+        non_default_add(elem, tile_set_spacing, ts.spacing);
+        non_default_add(elem, tile_set_margin, ts.margin);
         add(elem, tile_set_tile_count, ts.size.w * ts.size.h);
         add(elem, tile_set_columns, ts.size.w);
     }
@@ -251,15 +245,13 @@ void layer_visitor(const Layer& l, Xml::Element elem)
 {
     // clang-format off
     if constexpr (std::is_same_v<Layer, Object_layer>) {
-        if (auto c{l.color})
-            add(elem, object_layer_color, *c);
+        add(elem, object_layer_color, l.color);
         write(l.draw_order, elem);
     }
     add(elem, layer_name, l.name);
     if constexpr (std::is_same_v<Layer, Tile_layer>)
         write(l.size, elem);
-    if (l.opacity != Unit_interval{1})
-        add(elem, layer_opacity, l.opacity);
+    non_default_add(elem, layer_opacity, l.opacity, Default{Unit_interval{1}});
     if (!l.visible)
         add(elem, layer_visible, "0");
     write(l.offset, elem);
@@ -384,15 +376,13 @@ void write(const Map& map, Xml::Element elem)
     write(map.orientation, map.render_order, elem);
     write(map.size, elem);
     write_tile(map.general_tile_size, elem);
-    if (auto bg{map.background})
-        add(elem, map_background, *bg);
+    add(elem, map_background, map.background);
     add(elem, map_next_unique_id, map.next_unique_id);
     write(map.properties, elem);
     write(map.tile_sets, elem);
     write(map.layers, elem);
 }
 
-} // namespace
 } // namespace impl
 
 void write(const Map& map, gsl::not_null<gsl::czstring<>> path)

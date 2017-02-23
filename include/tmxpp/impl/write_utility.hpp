@@ -1,12 +1,14 @@
 #ifndef TMXPP_IMPL_WRITE_UTILITY_HPP
 #define TMXPP_IMPL_WRITE_UTILITY_HPP
 
+#include <optional>
 #include <string>
 #include <string_view>
 #include <type_traits>
 #include <boost/lexical_cast.hpp>
 #include <type_safe/constrained_type.hpp>
 #include <type_safe/strong_typedef.hpp>
+#include <tmxpp/File.hpp>
 #include <tmxpp/exceptions.hpp>
 #include <tmxpp/impl/Xml.hpp>
 #include <tmxpp/impl/to_string_color.hpp>
@@ -16,6 +18,20 @@ namespace tmxpp::impl {
 void add(Xml::Element elem, Xml::Attribute::Name name, std::string_view value)
 {
     elem.add(name, Xml::Attribute::Value{value});
+}
+
+void non_empty_add(
+    Xml::Element elem, Xml::Attribute::Name name, std::string_view value)
+{
+    if (!value.empty())
+        add(elem, name, value);
+}
+
+void non_empty_add(
+    Xml::Element elem, Xml::Attribute::Name name, const File& value)
+{
+    if (!value.empty())
+        add(elem, name, value.string());
 }
 
 template <
@@ -48,6 +64,38 @@ template <
 void add(Xml::Element elem, Xml::Attribute::Name name, T value)
 {
     add(elem, name, to_string(value));
+}
+
+template <class T>
+void add(Xml::Element elem, Xml::Attribute::Name name, std::optional<T> value)
+{
+    if (value)
+        add(elem, name, *value);
+}
+
+template <class T>
+struct Default {
+    explicit constexpr Default(T val) noexcept : value{val}
+    {
+    }
+
+    T value;
+};
+
+template <class T>
+void non_default_add(
+    Xml::Element elem, Xml::Attribute::Name name, T value,
+    Default<T> def = Default{T{}})
+{
+    if (value != def.value)
+        add(elem, name, value);
+}
+
+template <class T>
+void write(const std::optional<T>& value, Xml::Element elem)
+{
+    if (value)
+        write(*value, elem);
 }
 
 } // namespace tmxpp::impl
