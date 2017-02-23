@@ -143,9 +143,6 @@ std::enable_if_t<
     std::is_same_v<Tiles, Image_collection::Tiles>>
 write(const Tiles& ts, Xml::Element tset)
 {
-    if (ts.empty())
-        return;
-
     for (const auto& t : ts)
         write(t, tset.add(tile_set_tile));
 }
