@@ -94,12 +94,12 @@ void write(Frame f, Xml::Element elem)
     add(elem, frame_duration, f.duration.count());
 }
 
-void write(const Animation& anim, Xml::Element parent)
+void write(const Animation& anim, Xml::Element tile)
 {
     if (anim.empty())
         return;
 
-    auto elem{parent.add(animation)};
+    auto elem{tile.add(animation)};
 
     for (const auto& f : anim)
         write(f, elem.add(frame));
@@ -107,12 +107,12 @@ void write(const Animation& anim, Xml::Element parent)
 
 // Map::Tile_set ---------------------------------------------------------------
 
-void write_tile(Offset o, Xml::Element parent)
+void write_tile(Offset o, Xml::Element tset)
 {
     if (o == Offset{})
         return;
 
-    auto elem{parent.add(tile_offset)};
+    auto elem{tset.add(tile_offset)};
 
     add(elem, tile_offset_x, o.x);
     add(elem, tile_offset_y, o.y);
@@ -141,13 +141,13 @@ template <class Tiles>
 std::enable_if_t<
     std::is_same_v<Tiles, Tile_set::Tiles> ||
     std::is_same_v<Tiles, Image_collection::Tiles>>
-write(const Tiles& ts, Xml::Element parent)
+write(const Tiles& ts, Xml::Element tset)
 {
     if (ts.empty())
         return;
 
     for (const auto& t : ts)
-        write(t, parent.add(tile_set_tile));
+        write(t, tset.add(tile_set_tile));
 }
 
 enum class Tile_set_type : unsigned char { unknown, tsx };
@@ -160,7 +160,7 @@ void map_tile_set_visitor(const Tset& ts, Xml::Element elem, Tile_set_type type)
         non_empty_add(elem, tile_set_tsx, ts.tsx);
     }
 
-    if (type != Tile_set_type::tsx && !ts.tsx.empty())
+    if (bool is_external{type == Tile_set_type::unknown && !ts.tsx.empty()})
         return tmxpp::write(ts);
 
     add(elem, tile_set_name, ts.name);
@@ -180,7 +180,7 @@ void map_tile_set_visitor(const Tset& ts, Xml::Element elem, Tile_set_type type)
     write_tile(ts.tile_offset, elem);
     write(ts.properties, elem);
     if constexpr (std::is_same_v<Tset, Tile_set>)
-            write(ts.image, elem.add(image));
+        write(ts.image, elem.add(image));
     // clang-format on
     write(ts.tiles, elem);
 }
@@ -465,7 +465,7 @@ void write(const Map& map, Xml::Element elem)
 
 void write(const Map& map, gsl::not_null<gsl::czstring<>> path)
 {
-    impl::Xml tmx{impl::tmx_info::map};
+    impl::Xml tmx{impl::map};
 
     impl::write(map, tmx.root());
 
