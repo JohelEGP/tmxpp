@@ -150,11 +150,19 @@ write(const Tiles& ts, Xml::Element parent)
         write(t, parent.add(tile_set_tile));
 }
 
+enum class Tile_set_type : unsigned char { unknown, tsx };
+
 template <class Tset>
-void map_tile_set_visitor(const Tset& ts, Xml::Element elem)
+void map_tile_set_visitor(const Tset& ts, Xml::Element elem, Tile_set_type type)
 {
-    add(elem, tile_set_first_global_id, ts.first_global_id);
-    non_empty_add(elem, tile_set_tsx, ts.tsx);
+    if (type != Tile_set_type::tsx) {
+        add(elem, tile_set_first_global_id, ts.first_global_id);
+        non_empty_add(elem, tile_set_tsx, ts.tsx);
+    }
+
+    if (type != Tile_set_type::tsx && !ts.tsx.empty())
+        return tmxpp::write(ts);
+
     add(elem, tile_set_name, ts.name);
     // clang-format off
     if constexpr (std::is_same_v<Tset, Tile_set>) {
@@ -177,9 +185,21 @@ void map_tile_set_visitor(const Tset& ts, Xml::Element elem)
     write(ts.tiles, elem);
 }
 
-void write(const Map::Tile_set& ts, Xml::Element elem)
+void write(const Tile_set& ts, Xml::Element elem, Tile_set_type type)
 {
-    std::visit([elem](const auto& ts) { map_tile_set_visitor(ts, elem); }, ts);
+    map_tile_set_visitor(ts, elem, type);
+}
+
+void write(const Image_collection& col, Xml::Element elem, Tile_set_type type)
+{
+    map_tile_set_visitor(col, elem, type);
+}
+
+void write(const Map::Tile_set& ts, Xml::Element elem, Tile_set_type type)
+{
+    std::visit(
+        [elem, type](const auto& ts) { map_tile_set_visitor(ts, elem, type); },
+        ts);
 }
 
 // Data ------------------------------------------------------------------------
@@ -419,7 +439,7 @@ void write(
 void write(const Map::Tile_sets& tses, Xml::Element map)
 {
     for (const auto& ts : tses)
-        write(ts, map.add(tile_set));
+        write(ts, map.add(tile_set), Tile_set_type::unknown);
 }
 
 void write(const Map::Layers& ls, Xml::Element map)
@@ -452,8 +472,22 @@ void write(const Map& map, gsl::not_null<gsl::czstring<>> path)
     std::ofstream{path} << tmx;
 }
 
-void write(const Map::Tile_set&);
-void write(const Tile_set&);
-void write(const Image_collection&);
+template <class Tile_set_>
+std::enable_if_t<
+    std::is_same_v<Tile_set_, Map::Tile_set> ||
+    std::is_same_v<Tile_set_, Tile_set> ||
+    std::is_same_v<Tile_set_, Image_collection>>
+write(const Tile_set_& ts)
+{
+    if (ts.tsx.empty())
+        throw Exception{
+            "Writing an external tile set requires a non-empty tsx."};
+
+    impl::Xml tsx{impl::tile_set};
+
+    impl::write(ts, tsx.root(), impl::Tile_set_type::tsx);
+
+    std::ofstream{ts.tsx.string()} << tsx;
+}
 
 } // namespace tmxpp
