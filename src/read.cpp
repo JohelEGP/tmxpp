@@ -133,7 +133,8 @@ Tile_id read_local_id(Xml::Element frame)
 
 Frame::Duration read_duration(Xml::Element frame)
 {
-    return from_string<Frame::Duration>(value(frame, frame_duration));
+    return Frame::Duration{
+        from_string<Frame::Duration::rep>(value(frame, frame_duration))};
 }
 
 Frame read_frame(Xml::Element frame)

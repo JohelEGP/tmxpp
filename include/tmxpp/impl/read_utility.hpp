@@ -95,12 +95,6 @@ Degrees from_string<Degrees>(std::string_view s)
     return Degrees{from_string<type_safe::underlying_type<Degrees>>(s)};
 }
 
-template <>
-Frame::Duration from_string<Frame::Duration>(std::string_view s)
-{
-    return Frame::Duration{from_string<Frame::Duration::rep>(s)};
-}
-
 template <class T>
 T from_string(Xml::Attribute::Value value)
 {
