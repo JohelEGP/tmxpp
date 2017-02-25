@@ -6,6 +6,8 @@
 #include <sstream>
 #include <string>
 #include <string_view>
+#include <type_traits>
+#include <utility>
 #include <gsl/gsl>
 #include <gsl/string_span>
 #include <boost/lexical_cast.hpp>
@@ -16,12 +18,9 @@
 #include <range/v3/view/bounded.hpp>
 #include <range/v3/view/filter.hpp>
 #include <range/v3/view/transform.hpp>
-#include <type_safe/strong_typedef.hpp>
-#include <tmxpp/Degrees.hpp>
-#include <tmxpp/Pixel.hpp>
-#include <tmxpp/Tile_id.hpp>
-#include <tmxpp/Unique_id.hpp>
-#include <tmxpp/Unit_interval.hpp>
+#include <jegp/utility.hpp>
+#include <tmxpp/Constrained.hpp>
+#include <tmxpp/Strong_typedef.hpp>
 #include <tmxpp/exceptions.hpp>
 #include <tmxpp/impl/Xml.hpp>
 
@@ -42,57 +41,67 @@ optional_value(Xml::Element element, Xml::Attribute::Name name) noexcept
     return {};
 }
 
-// Returns: `s` as an `Arithmetic`.
-// Throws: `Exception` if it could not be converted.
-template <class Arithmetic>
-Arithmetic from_string(std::string_view s) try {
-    return boost::lexical_cast<Arithmetic>(s);
-}
-catch (const boost::bad_lexical_cast& e) {
-    throw Exception{std::string{s} + " could not be converted to Arithmetic. " +
-                    e.what()};
-}
+template <template <class> class Op, class T, class = std::void_t<>>
+struct detector {
+};
 
-template <>
-double from_string<double>(std::string_view s)
-{
-    std::stringstream ss;
-    ss << std::noskipws << std::scientific << s;
-    double num;
-    ss >> num;
-    if (!ss || !ss.eof())
-        throw Exception{std::string{s} + " could not be converted to double."};
-    return num;
-}
+template <template <class> class Op, class T>
+struct detector<Op, T, std::void_t<Op<T>>> {
+    using type = T;
+};
 
-template <>
-Tile_id from_string<Tile_id>(std::string_view s)
-{
-    return Tile_id{from_string<type_safe::underlying_type<Tile_id>>(s)};
-}
+template <template <class> class Op, class T>
+using detected_t = typename detector<Op, T>::type;
 
-template <>
-Pixel from_string<Pixel>(std::string_view s)
-{
-    return Pixel{from_string<type_safe::underlying_type<Pixel>>(s)};
-}
+template <class T>
+struct From_string {
+    // Returns: `s` as an `Integral`.
+    // Throws: `Exception` if it could not be converted.
+    template <class Integral = T>
+    std::enable_if_t<std::is_integral_v<Integral>, Integral>
+    operator()(std::string_view s) try {
+        return boost::lexical_cast<Integral>(s);
+    }
+    catch (const boost::bad_lexical_cast& e) {
+        throw Exception{std::string{s} +
+                        " could not be converted to Integral. " + e.what()};
+    }
 
-template <>
-Unit_interval from_string<Unit_interval>(std::string_view s)
-{
-    return Unit_interval{from_string<Unit_interval::value_type>(s)};
-}
+    // Returns: `s` as an `FloatingPoint`.
+    // Throws: `Exception` if it could not be converted.
+    template <class FloatingPoint = T>
+    std::enable_if_t<std::is_floating_point_v<FloatingPoint>, FloatingPoint>
+    operator()(std::string_view s)
+    {
+        std::stringstream ss;
+        ss << std::noskipws << std::scientific << s;
+        FloatingPoint num;
+        ss >> num;
+        if (!ss || !ss.eof())
+            throw Exception{std::string{s} +
+                            " could not be converted to FloatingPoint."};
+        return num;
+    }
 
-template <>
-Unique_id from_string<Unique_id>(std::string_view s)
-{
-    return Unique_id{from_string<type_safe::underlying_type<Unique_id>>(s)};
-}
+    template <class StrongTypedef = T>
+    detected_t<type_safe::underlying_type, StrongTypedef>
+    operator()(std::string_view s)
+    {
+        return StrongTypedef{
+            From_string<type_safe::underlying_type<StrongTypedef>>{}(s)};
+    }
 
-template <>
-Degrees from_string<Degrees>(std::string_view s)
+    template <class Constrained = T>
+    detected_t<jegp::Value_type, Constrained> operator()(std::string_view s)
+    {
+        return Constrained{From_string<jegp::Value_type<Constrained>>{}(s)};
+    }
+};
+
+template <class T>
+T from_string(std::string_view s)
 {
-    return Degrees{from_string<type_safe::underlying_type<Degrees>>(s)};
+    return From_string<T>{}(s);
 }
 
 template <class T>

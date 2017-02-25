@@ -7,9 +7,9 @@
 #include <string_view>
 #include <type_traits>
 #include <boost/lexical_cast.hpp>
-#include <type_safe/constrained_type.hpp>
-#include <type_safe/strong_typedef.hpp>
+#include <tmxpp/Constrained.hpp>
 #include <tmxpp/File.hpp>
+#include <tmxpp/Strong_typedef.hpp>
 #include <tmxpp/exceptions.hpp>
 #include <tmxpp/impl/Xml.hpp>
 #include <tmxpp/impl/to_string_color.hpp>
@@ -55,16 +55,16 @@ std::string to_string(double d)
     return ss.str();
 }
 
-template <class T, class Phantom>
-std::string to_string(type_safe::strong_typedef<Phantom, T> x)
+template <class T, class P>
+std::string to_string(Strong_typedef<T, P> x)
 {
     return to_string(get(x));
 }
 
-template <class T, class C, class V>
-std::string to_string(type_safe::constrained_type<T, C, V> x)
+template <class T, class C>
+std::string to_string(const Constrained<T, C>& x)
 {
-    return to_string(x.get_value());
+    return to_string(*x);
 }
 
 template <
