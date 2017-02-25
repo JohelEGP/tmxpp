@@ -22,7 +22,7 @@ std::string to_string(Flipped_global_id fgid)
     constexpr int first_flip_bit{29};
 
     Raw_id id{static_cast<Raw_id>(fgid.flip) << first_flip_bit |
-              static_cast<Raw_id>(get(fgid.global_id))};
+              static_cast<Raw_id>(get(fgid.id))};
 
     return std::to_string(id);
 }

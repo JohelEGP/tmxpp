@@ -126,9 +126,9 @@ using image::read_image;
 
 namespace animation {
 
-Tile_id read_local_id(Xml::Element frame)
+Local_tile_id read_id(Xml::Element frame)
 {
-    return from_string<Tile_id>(value(frame, frame_local_id));
+    return from_string<Local_tile_id>(value(frame, frame_id));
 }
 
 Frame::Duration read_duration(Xml::Element frame)
@@ -139,7 +139,7 @@ Frame::Duration read_duration(Xml::Element frame)
 
 Frame read_frame(Xml::Element frame)
 {
-    return {read_local_id(frame), read_duration(frame)};
+    return {read_id(frame), read_duration(frame)};
 }
 
 Animation read_animation(Xml::Element tile)
@@ -166,9 +166,9 @@ using object_layer::read_object_layer;
 
 namespace tile_set {
 
-Tile_id read_first_global_id(Xml::Element tile_set)
+Global_tile_id read_first_id(Xml::Element tile_set)
 {
-    return from_string<Tile_id>(value(tile_set, tile_set_first_global_id));
+    return from_string<Global_tile_id>(value(tile_set, tile_set_first_id));
 }
 
 File read_tsx(Xml::Element tile_set)
@@ -207,9 +207,9 @@ Offset read_tile_offset(Xml::Element tile_set)
         from_string<Offset::Coordinate>(value(*tile_offset, tile_offset_y))};
 }
 
-Tile_id read_tile_local_id(Xml::Element tile)
+Local_tile_id read_tile_id(Xml::Element tile)
 {
-    return from_string<Tile_id>(value(tile, tile_set_tile_local_id));
+    return from_string<Local_tile_id>(value(tile, tile_set_tile_id));
 }
 
 std::optional<Object_layer> read_tile_collision_shape(Xml::Element tile)
@@ -248,7 +248,7 @@ iSize read_size(Xml::Element tile_set)
 
 Tile_set::Tile read_tile(Xml::Element tile)
 {
-    return {read_tile_local_id(tile), read_properties(tile),
+    return {read_tile_id(tile), read_properties(tile),
             read_tile_collision_shape(tile), read_animation(tile)};
 }
 
@@ -258,15 +258,19 @@ Tile_set::Tiles read_tiles(Xml::Element tile_set)
         tile_set.children(tile_set_tile), read_tile);
 }
 
-Tile_set read_tile_set(Xml::Element tile_set, Tile_id first_global_id, File tsx)
+Tile_set read_tile_set(Xml::Element tile_set, Global_tile_id first_id, File tsx)
 {
-    return {
-        first_global_id,           std::move(tsx),
-        read_name(tile_set),       read_tile_size(tile_set),
-        read_spacing(tile_set),    read_margin(tile_set),
-        read_size(tile_set),       read_tile_offset(tile_set),
-        read_properties(tile_set), read_image(tile_set.child(tmx_info::image)),
-        read_tiles(tile_set)};
+    return {first_id,
+            std::move(tsx),
+            read_name(tile_set),
+            read_tile_size(tile_set),
+            read_spacing(tile_set),
+            read_margin(tile_set),
+            read_size(tile_set),
+            read_tile_offset(tile_set),
+            read_properties(tile_set),
+            read_image(tile_set.child(tmx_info::image)),
+            read_tiles(tile_set)};
 }
 
 } // namespace tile_set
@@ -275,7 +279,7 @@ namespace image_collection {
 
 Image_collection::Tile read_tile(Xml::Element tile)
 {
-    return {read_tile_local_id(tile), read_properties(tile),
+    return {read_tile_id(tile), read_properties(tile),
             read_image(tile.child(tmx_info::image)),
             read_tile_collision_shape(tile), read_animation(tile)};
 }
@@ -287,9 +291,9 @@ Image_collection::Tiles read_tiles(Xml::Element image_collection)
 }
 
 Image_collection read_image_collection(
-    Xml::Element image_collection, Tile_id first_global_id, File tsx)
+    Xml::Element image_collection, Global_tile_id first_id, File tsx)
 {
-    return {first_global_id,
+    return {first_id,
             std::move(tsx),
             read_name(image_collection),
             read_tile_size(image_collection),
@@ -312,17 +316,16 @@ bool is_tile_set(Xml::Element tile_set)
 
 Map::Tile_set read_map_tile_set(Xml::Element tile_set)
 {
-    auto first_global_id{read_first_global_id(tile_set)};
+    auto first_id{read_first_id(tile_set)};
     auto tsx{read_tsx(tile_set)};
 
     if (tsx.empty()) {
         if (is_tile_set(tile_set))
-            return tile_set::read_tile_set(tile_set, first_global_id, tsx);
-        return image_collection::read_image_collection(
-            tile_set, first_global_id, tsx);
+            return tile_set::read_tile_set(tile_set, first_id, tsx);
+        return image_collection::read_image_collection(tile_set, first_id, tsx);
     }
 
-    return read_tsx(first_global_id, std::move(tsx));
+    return read_tsx(first_id, std::move(tsx));
 }
 
 } // namespace tile_set
@@ -499,10 +502,10 @@ Degrees read_clockwise_rotation(Xml::Element object)
     return {};
 }
 
-Tile_id read_global_id(Xml::Element object)
+Global_tile_id read_global_id(Xml::Element object)
 {
     if (auto global_id{optional_value(object, object_global_id)})
-        return from_string<Tile_id>(*global_id);
+        return from_string<Global_tile_id>(*global_id);
     return {};
 }
 
@@ -715,7 +718,7 @@ Map read_tmx(gsl::not_null<gsl::czstring<>> path)
     throw impl::Invalid_element{map.name()};
 }
 
-Map::Tile_set read_tsx(Tile_id first_global_id, File tsx)
+Map::Tile_set read_tsx(Global_tile_id first_id, File tsx)
 {
     const impl::Xml xml{tsx.string().c_str()};
 
@@ -725,24 +728,23 @@ Map::Tile_set read_tsx(Tile_id first_global_id, File tsx)
         throw impl::Invalid_element{tile_set.name()};
 
     if (impl::tile_set::is_tile_set(tile_set))
-        return impl::read_tile_set(tile_set, first_global_id, std::move(tsx));
-    return impl::read_image_collection(
-        tile_set, first_global_id, std::move(tsx));
+        return impl::read_tile_set(tile_set, first_id, std::move(tsx));
+    return impl::read_image_collection(tile_set, first_id, std::move(tsx));
 }
 
-Tile_set read_tile_set(Tile_id first_global_id, File tsx)
+Tile_set read_tile_set(Global_tile_id first_id, File tsx)
 {
     const impl::Xml xml{tsx.string().c_str()};
 
     auto tile_set{xml.root()};
 
     if (tile_set.name() == impl::tmx_info::tile_set)
-        return impl::read_tile_set(tile_set, first_global_id, std::move(tsx));
+        return impl::read_tile_set(tile_set, first_id, std::move(tsx));
 
     throw impl::Invalid_element{tile_set.name()};
 }
 
-Image_collection read_image_collection(Tile_id first_global_id, File tsx)
+Image_collection read_image_collection(Global_tile_id first_id, File tsx)
 {
     const impl::Xml xml{tsx.string().c_str()};
 
@@ -750,7 +752,7 @@ Image_collection read_image_collection(Tile_id first_global_id, File tsx)
 
     if (image_collection.name() == impl::tmx_info::tile_set)
         return impl::read_image_collection(
-            image_collection, first_global_id, std::move(tsx));
+            image_collection, first_id, std::move(tsx));
 
     throw impl::Invalid_element{image_collection.name()};
 }

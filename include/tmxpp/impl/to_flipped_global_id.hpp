@@ -23,12 +23,12 @@ Flipped_global_id to_flipped_global_id(std::string_view s)
 
     Flipped_global_id fgid{
         static_cast<Flip>((value >> first_flip_bit) & flip_bits),
-        static_cast<Tile_id>(value & ~flip_mask)};
+        static_cast<Global_tile_id>(value & ~flip_mask)};
 
     if (!ok(fgid))
         throw Exception{
-            "Invalid Flipped_global_id value with Flip state without a global "
-            "Tile_id value"};
+            "Invalid Flipped_global_id value with Flip state without a "
+            "Global_tile_id value"};
 
     return fgid;
 }

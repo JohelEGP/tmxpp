@@ -36,7 +36,7 @@ constexpr Xml::Attribute::Name map_background{"backgroundcolor"sv};
 constexpr Xml::Attribute::Name map_next_unique_id{"nextobjectid"sv};
 
 constexpr Xml::Element::Name tile_set{"tileset"sv};
-constexpr Xml::Attribute::Name tile_set_first_global_id{"firstgid"sv};
+constexpr Xml::Attribute::Name tile_set_first_id{"firstgid"sv};
 constexpr Xml::Attribute::Name tile_set_tsx{"source"sv};
 constexpr Xml::Attribute::Name tile_set_name{"name"sv};
 constexpr Xml::Attribute::Name tile_set_spacing{"spacing"sv};
@@ -53,12 +53,12 @@ constexpr Xml::Attribute::Name image_source{"source"sv};
 constexpr Xml::Attribute::Name image_transparent{"trans"sv};
 
 constexpr Xml::Element::Name tile_set_tile{"tile"sv};
-constexpr Xml::Attribute::Name tile_set_tile_local_id{"id"sv};
+constexpr Xml::Attribute::Name tile_set_tile_id{"id"sv};
 
 constexpr Xml::Element::Name animation{"animation"sv};
 
 constexpr Xml::Element::Name frame{"frame"sv};
-constexpr Xml::Attribute::Name frame_local_id{"tileid"sv};
+constexpr Xml::Attribute::Name frame_id{"tileid"sv};
 constexpr Xml::Attribute::Name frame_duration{"duration"sv};
 
 constexpr Xml::Attribute::Name offset_x{"offsetx"sv};

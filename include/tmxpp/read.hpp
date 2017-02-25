@@ -13,9 +13,9 @@ namespace tmxpp {
 
 Map read_tmx(gsl::not_null<gsl::czstring<>> path);
 
-Map::Tile_set read_tsx(Tile_id first_global_id, File tsx);
-Tile_set read_tile_set(Tile_id first_global_id, File tsx);
-Image_collection read_image_collection(Tile_id first_global_id, File tsx);
+Map::Tile_set read_tsx(Global_tile_id first_id, File tsx);
+Tile_set read_tile_set(Global_tile_id first_id, File tsx);
+Image_collection read_image_collection(Global_tile_id first_id, File tsx);
 
 } // namespace tmxpp
 

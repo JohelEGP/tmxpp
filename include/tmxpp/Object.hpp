@@ -37,7 +37,7 @@ struct Object {
     Point position;
     Shape shape;
     Degrees clockwise_rotation;
-    Tile_id global_id;
+    Global_tile_id global_id;
     bool visible;
     Properties properties;
 };

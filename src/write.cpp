@@ -90,7 +90,7 @@ void write(const Image& img, Xml::Element elem)
 
 void write(Frame f, Xml::Element elem)
 {
-    add(elem, frame_local_id, f.local_id);
+    add(elem, frame_id, f.id);
     add(elem, frame_duration, f.duration.count());
 }
 
@@ -126,7 +126,7 @@ std::enable_if_t<
     std::is_same_v<Tile, Image_collection::Tile>>
 write(const Tile& tile, Xml::Element elem)
 {
-    add(elem, tile_set_tile_local_id, tile.local_id);
+    add(elem, tile_set_tile_id, tile.id);
     write(tile.properties, elem);
     // clang-format off
     if constexpr (std::is_same_v<Tile, Image_collection::Tile>)
@@ -153,7 +153,7 @@ template <class Tset>
 void map_tile_set_visitor(const Tset& ts, Xml::Element elem, Tile_set_type type)
 {
     if (type != Tile_set_type::tsx) {
-        add(elem, tile_set_first_global_id, ts.first_global_id);
+        add(elem, tile_set_first_id, ts.first_id);
         non_empty_add(elem, tile_set_tsx, ts.tsx);
     }
 

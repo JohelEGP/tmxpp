@@ -8,17 +8,17 @@ namespace tmxpp {
 
 struct Flipped_global_id {
     Flip flip;
-    Tile_id global_id;
+    Global_tile_id id;
 };
 
 constexpr bool ok(Flipped_global_id f) noexcept
 {
-    return f.global_id != Tile_id{} || f.flip == Flip{};
+    return f.id != Global_tile_id{} || f.flip == Flip{};
 }
 
 constexpr bool operator==(Flipped_global_id l, Flipped_global_id r) noexcept
 {
-    return l.flip == r.flip && l.global_id == r.global_id;
+    return l.flip == r.flip && l.id == r.id;
 }
 constexpr bool operator!=(Flipped_global_id l, Flipped_global_id r) noexcept
 {
