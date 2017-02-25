@@ -452,7 +452,7 @@ void write(const Map& map, Xml::Element elem)
     write(map.size, elem);
     write_tile(map.general_tile_size, elem);
     add(elem, map_background, map.background);
-    add(elem, map_next_unique_id, map.next_unique_id);
+    add(elem, map_next_id, map.next_id);
     write(map.properties, elem);
     write(map.tile_sets, elem);
     write(map.layers, elem);

@@ -656,9 +656,9 @@ std::optional<Color> read_background(Xml::Element map)
     return {};
 }
 
-Unique_id read_next_unique_id(Xml::Element map)
+Unique_id read_next_id(Xml::Element map)
 {
-    return from_string<Unique_id>(value(map, map_next_unique_id));
+    return from_string<Unique_id>(value(map, map_next_id));
 }
 
 Map::Tile_sets read_tile_sets(Xml::Element map)
@@ -692,11 +692,10 @@ Map::Layers read_layers(Xml::Element map)
 
 Map read_map(Xml::Element map)
 {
-    return {read_version(map),        read_orientation(map),
-            read_render_order(map),   read_isize(map),
-            read_tile_size(map),      read_background(map),
-            read_next_unique_id(map), read_properties(map),
-            read_tile_sets(map),      read_layers(map)};
+    return {read_version(map), read_orientation(map), read_render_order(map),
+            read_isize(map),   read_tile_size(map),   read_background(map),
+            read_next_id(map), read_properties(map),  read_tile_sets(map),
+            read_layers(map)};
 }
 
 } // namespace map

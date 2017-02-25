@@ -33,7 +33,7 @@ constexpr Xml::Attribute::Name map_staggered_index{"staggerindex"sv};
 constexpr Xml::Attribute::Value map_staggered_index_even{"even"sv};
 constexpr Xml::Attribute::Value map_staggered_index_odd{"odd"sv};
 constexpr Xml::Attribute::Name map_background{"backgroundcolor"sv};
-constexpr Xml::Attribute::Name map_next_unique_id{"nextobjectid"sv};
+constexpr Xml::Attribute::Name map_next_id{"nextobjectid"sv};
 
 constexpr Xml::Element::Name tile_set{"tileset"sv};
 constexpr Xml::Attribute::Name tile_set_first_id{"firstgid"sv};

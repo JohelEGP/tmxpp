@@ -55,7 +55,7 @@ struct Map {
     iSize size; // In tiles.
     pxSize general_tile_size;
     std::optional<Color> background;
-    Unique_id next_unique_id;
+    Unique_id next_id;
     Properties properties;
     Tile_sets tile_sets;
     Layers layers;
@@ -103,8 +103,7 @@ inline bool operator==(const Map& l, const Map& r) noexcept
     return l.version == r.version && l.orientation == r.orientation &&
            l.render_order == r.render_order && l.size == r.size &&
            l.general_tile_size == r.general_tile_size &&
-           l.background == r.background &&
-           l.next_unique_id == r.next_unique_id &&
+           l.background == r.background && l.next_id == r.next_id &&
            l.properties == r.properties && l.tile_sets == r.tile_sets &&
            l.layers == r.layers;
 }
