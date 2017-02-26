@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <tmxpp/Animation.hpp>
+#include <tmxpp/Constrained.hpp>
 #include <tmxpp/File.hpp>
 #include <tmxpp/Image.hpp>
 #include <tmxpp/Object_layer.hpp>
@@ -30,8 +31,8 @@ struct Tile_set {
     File tsx;
     std::string name;
     pxSize tile_size;
-    Pixel spacing;
-    Pixel margin;
+    Non_negative<Pixel> spacing;
+    Non_negative<Pixel> margin;
     iSize size; // In tiles.
     Offset tile_offset;
     Properties properties;

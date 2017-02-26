@@ -2,6 +2,7 @@
 #include <string>
 #include <utility>
 #include <tmxpp.hpp>
+#include <tmxpp/Constrained.hpp>
 #include <tmxpp/exceptions.hpp>
 #include <tmxpp/impl/Xml.hpp>
 #include <tmxpp/impl/exceptions.hpp>
@@ -62,9 +63,10 @@ Property::Value read_value(Xml::Element property)
     throw Invalid_attribute{property_alternative, *alternative};
 }
 
-std::string read_name(Xml::Element property)
+Non_empty<std::string> read_name(Xml::Element property)
 {
-    return std::string{get(value(property, property_name))};
+    return Non_empty<std::string>{
+        std::string{get(value(property, property_name))}};
 }
 
 Property read_property(Xml::Element property)
@@ -131,10 +133,10 @@ Local_tile_id read_id(Xml::Element frame)
     return from_string<Local_tile_id>(value(frame, frame_id));
 }
 
-Frame::Duration read_duration(Xml::Element frame)
+Non_negative<Frame::Duration> read_duration(Xml::Element frame)
 {
-    return Frame::Duration{
-        from_string<Frame::Duration::rep>(value(frame, frame_duration))};
+    return Non_negative<Frame::Duration>{Frame::Duration{
+        from_string<Frame::Duration::rep>(value(frame, frame_duration))}};
 }
 
 Frame read_frame(Xml::Element frame)
@@ -185,14 +187,16 @@ std::string read_name(Xml::Element tile_set)
     return {};
 }
 
-int read_tile_count(Xml::Element tile_set)
+Non_negative<int> read_tile_count(Xml::Element tile_set)
 {
-    return from_string<int>(value(tile_set, tile_set_tile_count));
+    return Non_negative<int>{
+        from_string<int>(value(tile_set, tile_set_tile_count))};
 }
 
-int read_columns(Xml::Element tile_set)
+Non_negative<int> read_columns(Xml::Element tile_set)
 {
-    return from_string<int>(value(tile_set, tile_set_columns));
+    return Non_negative<int>{
+        from_string<int>(value(tile_set, tile_set_columns))};
 }
 
 Offset read_tile_offset(Xml::Element tile_set)
@@ -221,29 +225,28 @@ std::optional<Object_layer> read_tile_collision_shape(Xml::Element tile)
 
 namespace tile_set {
 
-Pixel read_spacing(Xml::Element tile_set)
+Non_negative<Pixel> read_spacing(Xml::Element tile_set)
 {
-    if (auto spacing{optional_value(tile_set, tile_set_spacing)})
-        return from_string<Pixel>(*spacing);
-    return {};
+    auto spacing{optional_value(tile_set, tile_set_spacing)};
+    return Non_negative<Pixel>{spacing ? from_string<Pixel>(*spacing)
+                                       : Pixel{}};
 }
 
-Pixel read_margin(Xml::Element tile_set)
+Non_negative<Pixel> read_margin(Xml::Element tile_set)
 {
-    if (auto margin{optional_value(tile_set, tile_set_margin)})
-        return from_string<Pixel>(*margin);
-    return {};
+    auto margin{optional_value(tile_set, tile_set_margin)};
+    return Non_negative<Pixel>{margin ? from_string<Pixel>(*margin) : Pixel{}};
 }
 
 iSize read_size(Xml::Element tile_set)
 {
-    auto tile_count{read_tile_count(tile_set)};
-    auto columns{read_columns(tile_set)};
+    auto tile_count{*read_tile_count(tile_set)};
+    auto columns{*read_columns(tile_set)};
 
     if (columns == 0)
         throw Exception{"Invalid columns value: 0"};
 
-    return {columns, tile_count / columns};
+    return {iSize::Dimension{columns}, iSize::Dimension{tile_count / columns}};
 }
 
 Tile_set::Tile read_tile(Xml::Element tile)
@@ -474,11 +477,8 @@ Object::Polygon::Points read_points(Xml::Element poly)
 
 pxSize read_size(Xml::Element object)
 {
-    auto w{optional_value(object, size_width)};
-    auto h{optional_value(object, size_height)};
-
-    return {w ? from_string<pxSize::Dimension>(*w) : pxSize::Dimension{0},
-            h ? from_string<pxSize::Dimension>(*h) : pxSize::Dimension{0}};
+    return {from_string<pxSize::Dimension>(value(object, size_width)),
+            from_string<pxSize::Dimension>(value(object, size_height))};
 }
 
 Object::Shape read_shape(Xml::Element object)

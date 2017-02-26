@@ -29,7 +29,7 @@ std::string to_string(Flipped_global_id fgid)
 
 std::string to_string(const Data::Flipped_global_ids& ids, iSize sz)
 {
-    if (ids.size() / sz.h - sz.w != 0)
+    if (ids.size() / *sz.h - *sz.w != 0)
         throw Exception{"Data size does not match layer size."};
 
     auto data{ids | ranges::view::transform([](auto id) {
@@ -38,7 +38,7 @@ std::string to_string(const Data::Flipped_global_ids& ids, iSize sz)
                   return std::string{'0'};
               }) |
               ranges::view::intersperse(std::string{','}) |
-              ranges::view::chunk(2 * sz.w) |
+              ranges::view::chunk(2 * *sz.w) |
               ranges::view::join(std::string{'\n'})};
 
     return ranges::accumulate(data, std::string{'\n'}) + '\n';

@@ -43,20 +43,20 @@ struct Object {
     Properties properties;
 };
 
-constexpr bool operator==(Object::Rectangle l, Object::Rectangle r) noexcept
+inline bool operator==(Object::Rectangle l, Object::Rectangle r) noexcept
 {
     return l.size == r.size;
 }
-constexpr bool operator!=(Object::Rectangle l, Object::Rectangle r) noexcept
+inline bool operator!=(Object::Rectangle l, Object::Rectangle r) noexcept
 {
     return !(l == r);
 }
 
-constexpr bool operator==(Object::Ellipse l, Object::Ellipse r) noexcept
+inline bool operator==(Object::Ellipse l, Object::Ellipse r) noexcept
 {
     return l.size == r.size;
 }
-constexpr bool operator!=(Object::Ellipse l, Object::Ellipse r) noexcept
+inline bool operator!=(Object::Ellipse l, Object::Ellipse r) noexcept
 {
     return !(l == r);
 }

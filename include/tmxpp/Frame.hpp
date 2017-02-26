@@ -2,6 +2,7 @@
 #define TMXPP_FRAME_HPP
 
 #include <chrono>
+#include <tmxpp/Constrained.hpp>
 #include <tmxpp/Tile_id.hpp>
 
 namespace tmxpp {
@@ -10,7 +11,7 @@ struct Frame {
     using Duration = std::chrono::milliseconds;
 
     Local_tile_id id;
-    Duration duration;
+    Non_negative<Duration> duration;
 };
 
 inline bool operator==(Frame l, Frame r) noexcept

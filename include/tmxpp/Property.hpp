@@ -4,6 +4,7 @@
 #include <string>
 #include <variant>
 #include <tmxpp/Color.hpp>
+#include <tmxpp/Constrained.hpp>
 #include <tmxpp/File.hpp>
 
 namespace tmxpp {
@@ -11,7 +12,7 @@ namespace tmxpp {
 struct Property {
     using Value = std::variant<std::string, int, double, bool, Color, File>;
 
-    std::string name;
+    Non_empty<std::string> name;
     Value value;
 };
 

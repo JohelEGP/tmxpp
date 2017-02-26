@@ -91,7 +91,7 @@ void write(const Image& img, Xml::Element elem)
 void write(Frame f, Xml::Element elem)
 {
     add(elem, frame_id, f.id);
-    add(elem, frame_duration, f.duration.count());
+    add(elem, frame_duration, f.duration->count());
 }
 
 void write(const Animation& anim, Xml::Element tile)
@@ -166,7 +166,7 @@ void map_tile_set_visitor(const Tset& ts, Xml::Element elem, Tile_set_type type)
         write_tile(ts.tile_size, elem);
         non_default_add(elem, tile_set_spacing, ts.spacing);
         non_default_add(elem, tile_set_margin, ts.margin);
-        add(elem, tile_set_tile_count, ts.size.w * ts.size.h);
+        add(elem, tile_set_tile_count, *ts.size.w * *ts.size.h);
         add(elem, tile_set_columns, ts.size.w);
     }
     else {

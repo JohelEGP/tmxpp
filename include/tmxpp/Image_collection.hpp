@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <tmxpp/Animation.hpp>
+#include <tmxpp/Constrained.hpp>
 #include <tmxpp/File.hpp>
 #include <tmxpp/Image.hpp>
 #include <tmxpp/Object_layer.hpp>
@@ -30,8 +31,8 @@ struct Image_collection {
     File tsx;
     std::string name;
     pxSize max_tile_size;
-    int tile_count;
-    int columns;
+    Non_negative<int> tile_count;
+    Non_negative<int> columns;
     Offset tile_offset;
     Properties properties;
     Tiles tiles;

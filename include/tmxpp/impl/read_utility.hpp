@@ -83,18 +83,18 @@ struct From_string {
         return num;
     }
 
+    template <class Constrained = T>
+    detected_t<jegp::Value_type, Constrained> operator()(std::string_view s)
+    {
+        return Constrained{From_string<jegp::Value_type<Constrained>>{}(s)};
+    }
+
     template <class StrongTypedef = T>
     detected_t<type_safe::underlying_type, StrongTypedef>
     operator()(std::string_view s)
     {
         return StrongTypedef{
             From_string<type_safe::underlying_type<StrongTypedef>>{}(s)};
-    }
-
-    template <class Constrained = T>
-    detected_t<jegp::Value_type, Constrained> operator()(std::string_view s)
-    {
-        return Constrained{From_string<jegp::Value_type<Constrained>>{}(s)};
     }
 };
 

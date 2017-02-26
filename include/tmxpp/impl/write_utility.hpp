@@ -55,16 +55,16 @@ std::string to_string(double d)
     return ss.str();
 }
 
-template <class T, class P>
-std::string to_string(Strong_typedef<T, P> x)
-{
-    return to_string(get(x));
-}
-
 template <class T, class C>
 std::string to_string(const Constrained<T, C>& x)
 {
     return to_string(*x);
+}
+
+template <class T, class P>
+std::string to_string(Strong_typedef<T, P> x)
+{
+    return to_string(get(x));
 }
 
 template <
@@ -73,6 +73,13 @@ template <
 void add(Xml::Element elem, Xml::Attribute::Name name, T value)
 {
     add(elem, name, to_string(value));
+}
+
+template <class T, class C>
+void add(
+    Xml::Element elem, Xml::Attribute::Name name, const Constrained<T, C>& x)
+{
+    return add(elem, name, *x);
 }
 
 template <class T>
@@ -98,6 +105,15 @@ void non_default_add(
 {
     if (value != def.value)
         add(elem, name, value);
+}
+
+template <class T, class C>
+void non_default_add(
+    Xml::Element elem, Xml::Attribute::Name name,
+    const Constrained<T, C>& value, Default<T> def = Default{T{}})
+{
+    if (*value != def.value)
+        add(elem, name, *value);
 }
 
 template <class T>
