@@ -25,6 +25,22 @@ iSize read_isize(Xml::Element element)
             from_string<iSize::Dimension>(value(element, size_height))};
 }
 
+std::optional<pxSize> read_optional_size(Xml::Element element)
+{
+    auto w{optional_value(element, size_width)};
+    auto h{optional_value(element, size_height)};
+
+    if (bool{w} != bool{h})
+        throw Exception{"Expected both " + std::string{get(size_width)} +
+                        " and " + std::string{get(size_height)} + ", or none."};
+
+    if (!w)
+        return {};
+
+    return pxSize{from_string<pxSize::Dimension>(*w),
+                  from_string<pxSize::Dimension>(*h)};
+}
+
 pxSize read_tile_size(Xml::Element element)
 {
     return {from_string<pxSize::Dimension>(value(element, tile_size_width)),
@@ -102,24 +118,10 @@ std::optional<Color> read_transparent(Xml::Element image)
     return {};
 }
 
-std::optional<pxSize> read_size(Xml::Element image)
-{
-    auto w{optional_value(image, size_width)};
-    auto h{optional_value(image, size_height)};
-
-    if (bool{w} != bool{h})
-        throw Exception{"Expected image with both width and height, or none."};
-
-    if (!w)
-        return {};
-
-    return pxSize{from_string<pxSize::Dimension>(*w),
-                  from_string<pxSize::Dimension>(*h)};
-}
-
 Image read_image(Xml::Element image)
 {
-    return {read_source(image), read_transparent(image), read_size(image)};
+    return {read_source(image), read_transparent(image),
+            read_optional_size(image)};
 }
 
 } // namespace image
@@ -475,13 +477,7 @@ Object::Polygon::Points read_points(Xml::Element poly)
         tokenize(get(value(poly, object_polygon_points)), " "), to_point);
 }
 
-pxSize read_size(Xml::Element object)
-{
-    return {from_string<pxSize::Dimension>(value(object, size_width)),
-            from_string<pxSize::Dimension>(value(object, size_height))};
-}
-
-Object::Shape read_shape(Xml::Element object)
+std::optional<Object::Shape> read_shape(Xml::Element object)
 {
     if (auto polyline{object.optional_child(object_polyline)})
         return Object::Polyline{read_points(*polyline)};
@@ -489,10 +485,15 @@ Object::Shape read_shape(Xml::Element object)
     if (auto polygon{object.optional_child(object_polygon)})
         return Object::Polygon{read_points(*polygon)};
 
-    if (object.optional_child(object_ellipse))
-        return Object::Ellipse{read_size(object)};
+    auto size{read_optional_size(object)};
 
-    return Object::Rectangle{read_size(object)};
+    if (!size)
+        return {};
+
+    if (object.optional_child(object_ellipse))
+        return Object::Ellipse{*size};
+
+    return Object::Rectangle{*size};
 }
 
 Degrees read_clockwise_rotation(Xml::Element object)

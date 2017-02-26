@@ -36,7 +36,7 @@ struct Object {
     std::string name;
     std::string type;
     Point position;
-    Shape shape;
+    std::optional<Shape> shape;
     Degrees clockwise_rotation;
     std::optional<Global_tile_id> global_id;
     bool visible;
