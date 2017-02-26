@@ -22,21 +22,24 @@ std::string to_string(Flipped_global_id fgid)
     constexpr int first_flip_bit{29};
 
     Raw_id id{static_cast<Raw_id>(fgid.flip) << first_flip_bit |
-              static_cast<Raw_id>(get(fgid.id))};
+              static_cast<Raw_id>(*fgid.id)};
 
     return std::to_string(id);
 }
 
-std::string to_string(const Data::Flipped_global_ids& fgids, iSize sz)
+std::string to_string(const Data::Flipped_global_ids& ids, iSize sz)
 {
-    if (fgids.size() / sz.h - sz.w != 0)
+    if (ids.size() / sz.h - sz.w != 0)
         throw Exception{"Data size does not match layer size."};
 
-    auto data{
-        fgids |
-        ranges::view::transform([](auto fgid) { return to_string(fgid); }) |
-        ranges::view::intersperse(std::string{','}) |
-        ranges::view::chunk(2 * sz.w) | ranges::view::join(std::string{'\n'})};
+    auto data{ids | ranges::view::transform([](auto id) {
+                  if (id)
+                      return to_string(*id);
+                  return std::string{'0'};
+              }) |
+              ranges::view::intersperse(std::string{','}) |
+              ranges::view::chunk(2 * sz.w) |
+              ranges::view::join(std::string{'\n'})};
 
     return ranges::accumulate(data, std::string{'\n'}) + '\n';
 }

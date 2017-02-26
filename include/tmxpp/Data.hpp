@@ -1,6 +1,7 @@
 #ifndef TMXPP_DATA_HPP
 #define TMXPP_DATA_HPP
 
+#include <optional>
 #include <vector>
 #include <tmxpp/Flipped_global_id.hpp>
 
@@ -10,7 +11,7 @@ struct Data {
     enum class Encoding : unsigned char { csv, base64 };
     enum class Compression : unsigned char { none, zlib };
 
-    using Flipped_global_ids = std::vector<Flipped_global_id>;
+    using Flipped_global_ids = std::vector<std::optional<Flipped_global_id>>;
 
     Encoding encoding;
     Compression compression;

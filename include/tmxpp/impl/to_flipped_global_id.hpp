@@ -2,6 +2,7 @@
 #define TMXPP_IMPL_TO_FLIPPED_GLOBAL_ID
 
 #include <cstdint>
+#include <optional>
 #include <string_view>
 #include <tmxpp/Flip.hpp>
 #include <tmxpp/Flipped_global_id.hpp>
@@ -11,11 +12,14 @@
 
 namespace tmxpp::impl {
 
-Flipped_global_id to_flipped_global_id(std::string_view s)
+std::optional<Flipped_global_id> to_flipped_global_id(std::string_view s)
 {
     using Raw_id = std::uint_least32_t;
 
     Raw_id value{from_string<Raw_id>(s)};
+
+    if (value == 0)
+        return {};
 
     constexpr int first_flip_bit{29};
     constexpr Raw_id flip_bits{0b111};
@@ -24,11 +28,6 @@ Flipped_global_id to_flipped_global_id(std::string_view s)
     Flipped_global_id fgid{
         static_cast<Flip>((value >> first_flip_bit) & flip_bits),
         static_cast<Global_tile_id>(value & ~flip_mask)};
-
-    if (!ok(fgid))
-        throw Exception{
-            "Invalid Flipped_global_id value with Flip state without a "
-            "Global_tile_id value"};
 
     return fgid;
 }

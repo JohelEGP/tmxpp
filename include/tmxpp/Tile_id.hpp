@@ -2,23 +2,16 @@
 #define TMXPP_TILE_ID_HPP
 
 #include <cstdint>
-#include <tmxpp/Strong_typedef.hpp>
+#include <boost/hana/integral_constant.hpp>
+#include <tmxpp/Constrained.hpp>
 
 namespace tmxpp {
 
-class Local_tile_id
-    : public Strong_typedef<std::int_least32_t, Local_tile_id>,
-      type_safe::strong_typedef_op::integer_arithmetic<Local_tile_id> {
-public:
-    using Strong_typedef::Strong_typedef;
-};
+using Local_tile_id = Closed_range<
+    std::int_least32_t, boost::hana::int_<0>, boost::hana::int_<0x1FFF'FFFE>>;
 
-class Global_tile_id
-    : public Strong_typedef<std::int_least32_t, Global_tile_id>,
-      type_safe::strong_typedef_op::integer_arithmetic<Global_tile_id> {
-public:
-    using Strong_typedef::Strong_typedef;
-};
+using Global_tile_id = Closed_range<
+    std::int_least32_t, boost::hana::int_<1>, boost::hana::int_<0x1FFF'FFFF>>;
 
 } // namespace tmxpp
 

@@ -11,16 +11,11 @@ struct Flipped_global_id {
     Global_tile_id id;
 };
 
-constexpr bool ok(Flipped_global_id f) noexcept
-{
-    return f.id != Global_tile_id{} || f.flip == Flip{};
-}
-
-constexpr bool operator==(Flipped_global_id l, Flipped_global_id r) noexcept
+inline bool operator==(Flipped_global_id l, Flipped_global_id r) noexcept
 {
     return l.flip == r.flip && l.id == r.id;
 }
-constexpr bool operator!=(Flipped_global_id l, Flipped_global_id r) noexcept
+inline bool operator!=(Flipped_global_id l, Flipped_global_id r) noexcept
 {
     return !(l == r);
 }

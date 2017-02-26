@@ -13,12 +13,12 @@ struct Frame {
     Duration duration;
 };
 
-constexpr bool operator==(Frame l, Frame r) noexcept
+inline bool operator==(Frame l, Frame r) noexcept
 {
     return l.id == r.id && l.duration == r.duration;
 }
 
-constexpr bool operator!=(Frame l, Frame r) noexcept
+inline bool operator!=(Frame l, Frame r) noexcept
 {
     return !(l == r);
 }

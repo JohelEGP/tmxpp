@@ -502,7 +502,7 @@ Degrees read_clockwise_rotation(Xml::Element object)
     return {};
 }
 
-Global_tile_id read_global_id(Xml::Element object)
+std::optional<Global_tile_id> read_global_id(Xml::Element object)
 {
     if (auto global_id{optional_value(object, object_global_id)})
         return from_string<Global_tile_id>(*global_id);

@@ -268,7 +268,7 @@ void write(const Object& obj, Xml::Element elem)
     add(elem, object_unique_id, obj.unique_id);
     non_empty_add(elem, object_name, obj.name);
     non_empty_add(elem, object_type, obj.type);
-    non_default_add(elem, object_global_id, obj.global_id);
+    add(elem, object_global_id, obj.global_id);
     write(obj.position, elem);
     write(obj.shape, elem);
     non_default_add(elem, object_clockwise_rotation, obj.clockwise_rotation);

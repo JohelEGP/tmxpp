@@ -1,6 +1,7 @@
 #ifndef TMXPP_OBJECT_HPP
 #define TMXPP_OBJECT_HPP
 
+#include <optional>
 #include <string>
 #include <variant>
 #include <vector>
@@ -37,7 +38,7 @@ struct Object {
     Point position;
     Shape shape;
     Degrees clockwise_rotation;
-    Global_tile_id global_id;
+    std::optional<Global_tile_id> global_id;
     bool visible;
     Properties properties;
 };
