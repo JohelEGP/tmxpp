@@ -14,13 +14,13 @@ struct Data {
 
     Encoding encoding;
     Compression compression;
-    Flipped_global_ids flipped_global_ids;
+    Flipped_global_ids ids;
 };
 
 inline bool operator==(const Data& l, const Data& r) noexcept
 {
     return l.encoding == r.encoding && l.compression == r.compression &&
-           l.flipped_global_ids == r.flipped_global_ids;
+           l.ids == r.ids;
 }
 
 inline bool operator!=(const Data& l, const Data& r) noexcept

@@ -360,7 +360,7 @@ Data::Compression read_compression(Xml::Element data)
     throw Invalid_attribute{data_compression, *compression};
 }
 
-Data::Flipped_global_ids read_flipped_global_ids(
+Data::Flipped_global_ids read_ids(
     Data::Encoding encoding, Data::Compression compression,
     Xml::Element::Value data)
 {
@@ -378,7 +378,7 @@ Data read_data(Xml::Element data)
     auto compression{read_compression(data)};
 
     return {encoding, compression,
-            read_flipped_global_ids(encoding, compression, data.value())};
+            read_ids(encoding, compression, data.value())};
 }
 
 } // namespace data

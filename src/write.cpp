@@ -233,7 +233,7 @@ void write(const Data& d, Xml::Element elem, iSize size)
 
     write(d.encoding, elem);
     write(d.compression, elem);
-    elem.value(to_string(d.flipped_global_ids, size));
+    elem.value(to_string(d.ids, size));
 }
 
 // Object ----------------------------------------------------------------------
