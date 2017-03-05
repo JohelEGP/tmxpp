@@ -25,7 +25,7 @@ bool is_well_formatted(std::string_view s)
     return std::regex_match(s.begin(), s.end(), format);
 }
 
-constexpr std::string_view format_with_alpha{"#AARRGGBB"};
+constexpr std::string_view format_with_alpha{"#AARRGGBB", 9};
 
 // Requires: `is_well_formatted(color)`
 // Returns: The hexadecimal substring in `color`.
