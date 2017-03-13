@@ -8,10 +8,10 @@
 namespace tmxpp {
 
 using Local_tile_id = Closed_range<
-    std::int_least32_t, boost::hana::int_<0>, boost::hana::int_<0x1FFF'FFFE>>;
+    std::int_least32_t, boost::hana::long_<0>, boost::hana::long_<0x1FFF'FFFE>>;
 
 using Global_tile_id = Closed_range<
-    std::int_least32_t, boost::hana::int_<1>, boost::hana::int_<0x1FFF'FFFF>>;
+    std::int_least32_t, boost::hana::long_<1>, boost::hana::long_<0x1FFF'FFFF>>;
 
 } // namespace tmxpp
 
