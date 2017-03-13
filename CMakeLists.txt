@@ -10,22 +10,18 @@ add_library(tmxpp
     src/impl/Xml.cpp)
 target_include_directories(tmxpp PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-)
+    $<INSTALL_INTERFACE:include>)
 
-find_package(Boost.Hana QUIET)
-if (Boost.Hana_FOUND)
-    target_link_libraries(tmxpp PUBLIC hana)
-else()
-    find_package(Boost 1.61.0 REQUIRED)
-    target_link_libraries(tmxpp PUBLIC Boost::boost)
-endif()
-
-find_package(jegp 3.0.0 REQUIRED)
-find_package(RapidXml 5.0.0 REQUIRED)
+include(find_dependencies.cmake)
 target_link_libraries(tmxpp
-    PUBLIC jegp
-    PRIVATE RapidXml)
+    PUBLIC
+    #   GSL
+        $<$<BOOL:${Boost.Hana_FOUND}>:hana>
+        $<$<NOT:$<BOOL:${Boost.Hana_FOUND}>>:Boost::boost>
+        jegp
+    PRIVATE
+    #   Range-v3
+        RapidXml)
 
 if (NOT 3.8.0 VERSION_GREATER CMAKE_VERSION)
     target_compile_features(tmxpp PUBLIC cxx_std_17)
@@ -42,13 +38,12 @@ install(TARGETS tmxpp EXPORT tmxppTargets
     LIBRARY DESTINATION lib)
 install(DIRECTORY include/ DESTINATION include)
 
-export(EXPORT tmxppTargets FILE tmxppTargets.cmake)
-configure_file(tmxppConfig.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/tmxppConfig.cmake
-    COPYONLY)
+set(cmake_files tmxppConfig.cmake find_dependencies.cmake)
 
-install(EXPORT tmxppTargets DESTINATION cmake)
-install(
-    FILES
-        ${CMAKE_CURRENT_BINARY_DIR}/tmxppConfig.cmake
-    DESTINATION cmake)
+export(EXPORT tmxppTargets)
+foreach(cfile IN LISTS cmake_files)
+    configure_file(${cfile} ${cfile} COPYONLY)
+endforeach()
+
+install(EXPORT tmxppTargets  DESTINATION lib/cmake/tmxpp)
+install(FILES ${cmake_files} DESTINATION lib/cmake/tmxpp)
