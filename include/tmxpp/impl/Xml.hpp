@@ -76,7 +76,7 @@ public:
             elem->value(get(value));
         }
 
-        void value(std::string value) const noexcept
+        void value(std::string&& value) const
         {
             this->value(Value{elem->document()->allocate_string(value)});
         }
