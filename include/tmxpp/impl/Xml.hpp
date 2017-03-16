@@ -24,14 +24,13 @@
 namespace tmxpp::impl {
 
 // Represents an xml document.
-// All arguments of type `Attribute::Name` and `Element::Name` are required to
-// be from the header tmx_info.hpp (`constexpr` and non-empty).
 class Xml {
 public:
     class Element;
 
     class Attribute {
     public:
+        // All `Name` values are required to be from the header tmx_info.hpp.
         using Name  = Strong_typedef<std::string_view, struct _attribute_name>;
         using Value = Strong_typedef<std::string_view, struct _attribute_value>;
 
@@ -59,6 +58,7 @@ public:
 
     class Element {
     public:
+        // All `Name` values are required to be from the header tmx_info.hpp.
         using Name  = Strong_typedef<std::string_view, struct _element_name>;
         using Value = Strong_typedef<std::string_view, struct _element_value>;
 
