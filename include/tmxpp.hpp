@@ -7,7 +7,6 @@
 #include <tmxpp/Degrees.hpp>
 #include <tmxpp/File.hpp>
 #include <tmxpp/Flip.hpp>
-#include <tmxpp/Flipped_global_id.hpp>
 #include <tmxpp/Frame.hpp>
 #include <tmxpp/Image.hpp>
 #include <tmxpp/Image_collection.hpp>

@@ -7,7 +7,7 @@
 #include <tmxpp/exceptions.hpp>
 #include <tmxpp/impl/Xml.hpp>
 #include <tmxpp/impl/tmx_info.hpp>
-#include <tmxpp/impl/to_string_flipped_global_ids.hpp>
+#include <tmxpp/impl/to_string_flipped_ids.hpp>
 #include <tmxpp/impl/write_poly.hpp>
 #include <tmxpp/impl/write_utility.hpp>
 
@@ -225,14 +225,18 @@ void write(Data::Compression c, Xml::Element data)
     }());
 }
 
+void write(Data::Format f, Xml::Element data)
+{
+    write(f.encoding(), data);
+    write(f.compression(), data);
+}
+
 void write(const Data& d, Xml::Element elem, iSize size)
 {
-    if (d.encoding != Data::Encoding::csv ||
-        d.compression != Data::Compression::none)
+    if (d.format != Data::Encoding::csv)
         throw Exception{"Can only handle csv-encoded data."};
 
-    write(d.encoding, elem);
-    write(d.compression, elem);
+    write(d.format, elem);
     elem.value(to_string(d.ids, size));
 }
 

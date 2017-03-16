@@ -9,7 +9,7 @@
 #include <tmxpp/impl/read_utility.hpp>
 #include <tmxpp/impl/tmx_info.hpp>
 #include <tmxpp/impl/to_color.hpp>
-#include <tmxpp/impl/to_flipped_global_id.hpp>
+#include <tmxpp/impl/to_data_flipped_id.hpp>
 #include <tmxpp/impl/to_point.hpp>
 
 namespace tmxpp {
@@ -365,25 +365,25 @@ Data::Compression read_compression(Xml::Element data)
     throw Invalid_attribute{data_compression, *compression};
 }
 
-Data::Flipped_global_ids read_ids(
-    Data::Encoding encoding, Data::Compression compression,
-    Xml::Element::Value data)
+Data::Format read_format(Xml::Element data)
 {
-    if (encoding != Data::Encoding::csv ||
-        compression != Data::Compression::none)
+    return {read_encoding(data), read_compression(data)};
+}
+
+Data::Flipped_ids read_ids(Data::Format format, Xml::Element::Value data)
+{
+    if (format != Data::Encoding::csv)
         throw Exception{"Can only handle csv-encoded data."};
 
-    return transform<Data::Flipped_global_ids>(
-        tokenize(get(data), ",\n"), to_flipped_global_id);
+    return transform<Data::Flipped_ids>(
+        tokenize(get(data), ",\n"), to_data_flipped_id);
 }
 
 Data read_data(Xml::Element data)
 {
-    auto encoding{read_encoding(data)};
-    auto compression{read_compression(data)};
+    auto format{read_format(data)};
 
-    return {encoding, compression,
-            read_ids(encoding, compression, data.value())};
+    return {format, read_ids(format, data.value())};
 }
 
 } // namespace data
