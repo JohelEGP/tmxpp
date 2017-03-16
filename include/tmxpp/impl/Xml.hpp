@@ -7,7 +7,6 @@
 #include <string_view>
 #include <utility>
 #include <gsl/gsl>
-#include <gsl/gsl_assert>
 #include <gsl/string_span>
 #include <range/v3/view/filter.hpp>
 #include <range/v3/view/indirect.hpp>
@@ -165,22 +164,6 @@ public:
         {
             elem->append_node(elem->document()->allocate_node(
                 rapidxml::node_element, get(name)));
-
-            return Element{elem->last_node()};
-        }
-
-        // Effects: Adds a child `Element` with the given `name` and `value`.
-        // Returns: The added `Element`.
-        Element add(Name name, Value value) const
-        {
-            Expects(!get(value).empty());
-
-            auto doc{elem->document()};
-
-            value = Value{doc->allocate_string(get(value))};
-
-            elem->append_node(doc->allocate_node(
-                rapidxml::node_element, get(name), get(value)));
 
             return Element{elem->last_node()};
         }
