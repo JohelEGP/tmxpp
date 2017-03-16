@@ -246,7 +246,7 @@ iSize read_size(Xml::Element tile_set)
     auto columns{*read_columns(tile_set)};
 
     if (columns == 0)
-        throw Exception{"Invalid columns value: 0"};
+        throw Exception{"Invalid tile set columns value: 0"};
 
     return {iSize::Dimension{columns}, iSize::Dimension{tile_count / columns}};
 }
