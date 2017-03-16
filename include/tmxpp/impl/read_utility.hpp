@@ -12,9 +12,15 @@
 #include <gsl/string_span>
 #include <boost/lexical_cast.hpp>
 #include <boost/tokenizer.hpp>
+#include <range/v3/action/concepts.hpp>
 #include <range/v3/algorithm/any_of.hpp>
 #include <range/v3/begin_end.hpp>
 #include <range/v3/distance.hpp>
+#include <range/v3/range_concepts.hpp>
+#include <range/v3/range_traits.hpp>
+#include <range/v3/utility/concepts.hpp>
+#include <range/v3/utility/functional.hpp>
+#include <range/v3/utility/invoke.hpp>
 #include <range/v3/view/bounded.hpp>
 #include <range/v3/view/filter.hpp>
 #include <range/v3/view/transform.hpp>
@@ -57,25 +63,23 @@ template <class T>
 struct From_string {
     // Returns: `s` as an `Integral`.
     // Throws: `Exception` if it could not be converted.
-    template <class Integral = T>
-    std::enable_if_t<std::is_integral_v<Integral>, Integral>
-    operator()(std::string_view s) try {
-        return boost::lexical_cast<Integral>(s);
+    CONCEPT_REQUIRES(ranges::Integral<T>())
+    T operator()(std::string_view s) try {
+        return boost::lexical_cast<T>(s);
     }
     catch (const boost::bad_lexical_cast& e) {
         throw Exception{std::string{s} +
                         " could not be converted to Integral. " + e.what()};
     }
 
-    // Returns: `s` as an `FloatingPoint`.
+    // Returns: `s` as a `T` floating point.
     // Throws: `Exception` if it could not be converted.
-    template <class FloatingPoint = T>
-    std::enable_if_t<std::is_floating_point_v<FloatingPoint>, FloatingPoint>
-    operator()(std::string_view s)
+    CONCEPT_REQUIRES(std::is_floating_point_v<T>)
+    T operator()(std::string_view s)
     {
         std::stringstream ss;
         ss << std::noskipws << std::scientific << s;
-        FloatingPoint num;
+        T num;
         ss >> num;
         if (!ss || !ss.eof())
             throw Exception{std::string{s} +
@@ -110,7 +114,8 @@ T from_string(Xml::Attribute::Value value)
     return from_string<T>(get(value));
 }
 
-// Returns: The range of `element`'s children whose names are in `names`.
+// Returns: A `ranges::InputView` of `element`'s children whose names are in
+//          `names`.
 auto children(
     Xml::Element element, std::initializer_list<Xml::Element::Name> names)
 {
@@ -120,24 +125,31 @@ auto children(
            });
 }
 
-// Requires: `ReservableContainer` is a STL `SequenceContainer` with a `reserve`
-//           member. `View` is a range-v3 view. `Function` takes an element of
-//           the `view` and returns an element of the `ReservableContainer`.
-// Returns: The `view` `transform`ed into the `ReservableContainer`.
-template <class ReservableContainer, class View, class Function>
-ReservableContainer transform(View view, Function transform)
+// Requires: `Cont` is a STL `SequenceContainer`.
+// Returns: `rng` `trans`formed into the `Cont`.
+template <
+    class Cont, class Rng, class Transform,
+    CONCEPT_REQUIRES_(
+        ranges::Reservable<Cont>() && ranges::InputRange<Rng>() &&
+        ranges::RegularInvocable<
+            Transform, ranges::range_value_type_t<Rng>>() &&
+        ranges::ConvertibleTo<
+            ranges::result_of_t<Transform(ranges::range_value_type_t<Rng>)>,
+            jegp::Value_type<Cont>>())>
+Cont transform(Rng rng, Transform trans)
 {
-    ReservableContainer container;
-    container.reserve(ranges::distance(view));
+    Cont container;
+    container.reserve(ranges::distance(rng));
 
-    auto elements{view | ranges::view::transform(transform) |
-                  ranges::view::bounded};
+    auto elements{rng | ranges::view::transform(trans) | ranges::view::bounded};
 
+    CONCEPT_ASSERT(ranges::ReserveAndAssignable<
+                   Cont, decltype(ranges::begin(elements))>());
     container.assign(ranges::begin(elements), ranges::end(elements));
     return container;
 }
 
-// Returns: A range-v3 range of `std::string`s where the elements are the
+// Returns: A `ranges::InputRange` of `std::string`s where the elements are the
 //          substrings in `to_tokenize` separated by the characters in
 //          `separators`.
 auto tokenize(

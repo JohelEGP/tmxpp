@@ -106,7 +106,8 @@ public:
             return {};
         }
 
-        // Returns: A range-v3 view of the `Attribute`s filtered by `name`.
+        // Returns: A `ranges::InputView` of the `Attribute`s filtered by
+        //          `name`.
         auto attributes(Attribute::Name name) const noexcept
         {
             return ranges::view::iota(
@@ -120,7 +121,7 @@ public:
                        [](auto&& attribute) { return Attribute{&attribute}; });
         }
 
-        // Returns: A range-v3 view of the children `Element`s.
+        // Returns: A `ranges::InputView` of the children `Element`s.
         auto children() const noexcept
         {
             return ranges::view::iota(
@@ -131,7 +132,7 @@ public:
                        [](auto&& child) { return Element{&child}; });
         }
 
-        // Returns: A range-v3 view of the children `Element`s filtered by
+        // Returns: A `ranges::InputView` of the children `Element`s filtered by
         //          `name`.
         auto children(Name name) const noexcept
         {
