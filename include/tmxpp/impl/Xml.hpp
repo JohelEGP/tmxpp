@@ -1,6 +1,8 @@
 #ifndef TMXPP_IMPL_XML_HPP
 #define TMXPP_IMPL_XML_HPP
 
+#include <exception>
+#include <new>
 #include <optional>
 #include <ostream>
 #include <string>
@@ -181,18 +183,19 @@ public:
     };
 
     // Effects: Loads and parses the `Xml` `path`.
-    // Throws: `Exception` in case of parsing error or lack of root element.
-    explicit Xml(gsl::not_null<gsl::czstring<>> path) : xml{path}
-    {
-        try {
-            doc.parse<rapidxml::parse_fastest>(std::as_const(xml)->data());
-        }
-        catch (const rapidxml::parse_error& e) {
-            throw Exception{e.what()};
-        }
+    // Throws: `Exception` in case of loading or parsing error or lack of root
+    //         element.
+    explicit Xml(gsl::not_null<gsl::czstring<>> path) try : xml(path) {
+        doc.parse<rapidxml::parse_fastest>(std::as_const(xml)->data());
 
         if (root().elem == nullptr)
             throw Exception{std::string{path} + " has no root element."};
+    }
+    catch (const std::bad_alloc&) {
+        throw;
+    }
+    catch (const std::exception& e) {
+        throw Exception{e.what()};
     }
 
     // Effects: Creates an `Xml` with the root `Element` `name`.
