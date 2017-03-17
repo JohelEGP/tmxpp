@@ -6,6 +6,7 @@
 #include <tmxpp.hpp>
 #include <tmxpp/exceptions.hpp>
 #include <tmxpp/impl/Xml.hpp>
+#include <tmxpp/impl/exceptions.hpp>
 #include <tmxpp/impl/tmx_info.hpp>
 #include <tmxpp/impl/to_string_flipped_ids.hpp>
 #include <tmxpp/impl/write_poly.hpp>
@@ -207,7 +208,7 @@ void write(Data::Encoding e, Xml::Element data)
         switch (e) {
         case Data::Encoding::csv: return data_encoding_csv;
         case Data::Encoding::base64: return data_encoding_base64;
-        default: throw Exception{""};
+        default: throw Invalid_enum{"Invalid Data::Encoding.", e};
         }
     }());
 }
@@ -220,7 +221,7 @@ void write(Data::Compression c, Xml::Element data)
     data.add(data_compression, [c] {
         switch (c) {
         case Data::Compression::zlib: return data_compression_zlib;
-        default: throw Exception{""};
+        default: throw Invalid_enum{"Invalid Data::Compression.", c};
         }
     }());
 }
@@ -292,7 +293,7 @@ void write(Object_layer::Draw_order do_, Xml::Element layer)
         switch (do_) {
         case Object_layer::Draw_order::index:
             return object_layer_draw_order_index;
-        default: throw Exception{""};
+        default: throw Invalid_enum{"Invalid Object_layer::Draw_order.", do_};
         }
     }());
 }
@@ -374,7 +375,7 @@ void write(Map::Render_order ro, Xml::Element map)
         case Map::Render_order::right_up: return map_render_order_right_up;
         case Map::Render_order::left_down: return map_render_order_left_down;
         case Map::Render_order::left_up: return map_render_order_left_up;
-        default: throw Exception{""};
+        default: throw Invalid_enum{"Invalid Map::Render_order.", ro};
         }
     }());
 }
@@ -385,7 +386,7 @@ void write(Map::Staggered::Axis a, Xml::Element map)
         switch (a) {
         case Map::Staggered::Axis::x: return map_staggered_axis_x;
         case Map::Staggered::Axis::y: return map_staggered_axis_y;
-        default: throw Exception{""};
+        default: throw Invalid_enum{"Invalid Map::Staggered::Axis.", a};
         }
     }());
 }
@@ -396,7 +397,7 @@ void write(Map::Staggered::Index i, Xml::Element map)
         switch (i) {
         case Map::Staggered::Index::even: return map_staggered_index_even;
         case Map::Staggered::Index::odd: return map_staggered_index_odd;
-        default: throw Exception{""};
+        default: throw Invalid_enum{"Invalid Map::Staggered::Index.", i};
         }
     }());
 }

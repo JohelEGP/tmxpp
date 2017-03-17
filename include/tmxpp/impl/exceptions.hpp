@@ -1,6 +1,9 @@
 #ifndef TMXPP_IMPL_EXCEPTIONS_HPP
 #define TMXPP_IMPL_EXCEPTIONS_HPP
 
+#include <string>
+#include <utility>
+#include <jegp/utility.hpp>
 #include <tmxpp/exceptions.hpp>
 #include <tmxpp/impl/Xml.hpp>
 
@@ -22,6 +25,16 @@ public:
 
     explicit Invalid_element(Name);
     explicit Invalid_element(Name, Value);
+};
+
+class Invalid_enum : public Exception {
+public:
+    template <class Enum>
+    explicit Invalid_enum(std::string what1, Enum e)
+      : Exception{std::move(what1) +
+                  " Value: " + std::to_string(jegp::underlying(e))}
+    {
+    }
 };
 
 } // namespace tmxpp::impl
