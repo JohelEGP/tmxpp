@@ -7,16 +7,23 @@
 #include <sstream>
 #include <string>
 #include <tmxpp/Color.hpp>
+#include <tmxpp/exceptions.hpp>
 
 namespace tmxpp::impl {
 
 std::string to_string(Color c)
 {
+    auto checked = [](Color::Channel c) {
+        if (c > 255)
+            throw Exception{"Color::Channel value over 8 bits."};
+        return c;
+    };
+
     using Channels = std::uint_least32_t;
 
-    Channels channels{static_cast<Channels>(c.a) << 24 |
-                      static_cast<Channels>(c.r) << 16 |
-                      static_cast<Channels>(c.g) << 8 | c.b};
+    Channels channels{static_cast<Channels>(checked(c.a)) << 24 |
+                      static_cast<Channels>(checked(c.r)) << 16 |
+                      static_cast<Channels>(checked(c.g)) << 8 | checked(c.b)};
 
     std::stringstream ss;
     ss << std::hex << channels;
