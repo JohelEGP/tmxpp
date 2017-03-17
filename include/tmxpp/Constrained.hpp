@@ -14,7 +14,7 @@ struct Verifier {
     static void verify(const T& value, Predicate pred)
     {
         if (!pred(value))
-            throw Invalid_argument{""};
+            throw Invalid_argument{"Invalid value to Constrained."};
     }
 };
 
