@@ -5,12 +5,7 @@
 
 namespace tmxpp {
 
-class Degrees
-    : public Strong_typedef<double, Degrees>,
-      type_safe::strong_typedef_op::floating_point_arithmetic<Degrees> {
-public:
-    using Strong_typedef::Strong_typedef;
-};
+using Degrees = Strong_typedef<double, struct _degrees>;
 
 } // namespace tmxpp
 

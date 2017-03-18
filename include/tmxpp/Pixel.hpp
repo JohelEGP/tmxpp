@@ -5,11 +5,7 @@
 
 namespace tmxpp {
 
-class Pixel : public Strong_typedef<double, Pixel>,
-              type_safe::strong_typedef_op::floating_point_arithmetic<Pixel> {
-public:
-    using Strong_typedef::Strong_typedef;
-};
+using Pixel = Strong_typedef<double, struct _pixel>;
 
 } // namespace tmxpp
 
