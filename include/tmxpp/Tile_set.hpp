@@ -40,14 +40,14 @@ struct Tile_set {
     Tiles tiles;
 };
 
-inline bool
-operator==(const Tile_set::Tile& l, const Tile_set::Tile& r) noexcept
+inline bool operator==(
+    const Tile_set::Tile& l, const Tile_set::Tile& r) noexcept
 {
     return l.id == r.id && l.properties == r.properties &&
            l.collision_shape == r.collision_shape && l.animation == r.animation;
 }
-inline bool
-operator!=(const Tile_set::Tile& l, const Tile_set::Tile& r) noexcept
+inline bool operator!=(
+    const Tile_set::Tile& l, const Tile_set::Tile& r) noexcept
 {
     return !(l == r);
 }

@@ -61,24 +61,24 @@ inline bool operator!=(Object::Ellipse l, Object::Ellipse r) noexcept
     return !(l == r);
 }
 
-inline bool
-operator==(const Object::Polygon& l, const Object::Polygon& r) noexcept
+inline bool operator==(
+    const Object::Polygon& l, const Object::Polygon& r) noexcept
 {
     return l.points == r.points;
 }
-inline bool
-operator!=(const Object::Polygon& l, const Object::Polygon& r) noexcept
+inline bool operator!=(
+    const Object::Polygon& l, const Object::Polygon& r) noexcept
 {
     return !(l == r);
 }
 
-inline bool
-operator==(const Object::Polyline& l, const Object::Polyline& r) noexcept
+inline bool operator==(
+    const Object::Polyline& l, const Object::Polyline& r) noexcept
 {
     return l.points == r.points;
 }
-inline bool
-operator!=(const Object::Polyline& l, const Object::Polyline& r) noexcept
+inline bool operator!=(
+    const Object::Polyline& l, const Object::Polyline& r) noexcept
 {
     return !(l == r);
 }

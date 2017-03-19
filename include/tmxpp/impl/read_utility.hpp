@@ -39,8 +39,8 @@ Xml::Attribute::Value value(Xml::Element element, Xml::Attribute::Name name)
 
 // Returns: The value of the `name` attribute in `element`, if there is such an
 //          attribute.
-std::optional<Xml::Attribute::Value>
-optional_value(Xml::Element element, Xml::Attribute::Name name) noexcept
+std::optional<Xml::Attribute::Value> optional_value(
+    Xml::Element element, Xml::Attribute::Name name) noexcept
 {
     if (auto attribute{element.optional_attribute(name)})
         return attribute->value();
@@ -94,8 +94,8 @@ struct From_string {
     }
 
     template <class StrongTypedef = T>
-    detected_t<type_safe::underlying_type, StrongTypedef>
-    operator()(std::string_view s)
+    detected_t<type_safe::underlying_type, StrongTypedef> operator()(
+        std::string_view s)
     {
         return StrongTypedef{
             From_string<type_safe::underlying_type<StrongTypedef>>{}(s)};
