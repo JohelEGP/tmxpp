@@ -319,7 +319,8 @@ bool is_tile_set(Xml::Element tile_set)
     return bool{tile_set.optional_child(tmx_info::image)};
 }
 
-Map::Tile_set read_map_tile_set(Xml::Element tile_set)
+Map::Tile_set read_map_tile_set(
+    Xml::Element tile_set, const std::experimental::filesystem::path& tsx_base)
 {
     auto first_id{read_first_id(tile_set)};
     auto tsx{read_tsx(tile_set)};
@@ -330,7 +331,7 @@ Map::Tile_set read_map_tile_set(Xml::Element tile_set)
         return image_collection::read_image_collection(tile_set, first_id, tsx);
     }
 
-    return read_tsx(first_id, std::move(tsx));
+    return read_tsx(first_id, std::move(tsx), tsx_base);
 }
 
 } // namespace tile_set
@@ -662,10 +663,13 @@ Unique_id read_next_id(Xml::Element map)
     return from_string<Unique_id>(value(map, map_next_id));
 }
 
-Map::Tile_sets read_tile_sets(Xml::Element map)
+Map::Tile_sets read_tile_sets(
+    Xml::Element map, const std::experimental::filesystem::path& tsx_base)
 {
     return transform<Map::Tile_sets>(
-        map.children(tmx_info::tile_set), read_map_tile_set);
+        map.children(tmx_info::tile_set), [&](Xml::Element tile_set) {
+            return read_map_tile_set(tile_set, tsx_base);
+        });
 }
 
 Map::Layer read_layer(Xml::Element layer)
@@ -691,12 +695,14 @@ Map::Layers read_layers(Xml::Element map)
         read_layer);
 }
 
-Map read_map(Xml::Element map)
+Map read_map(
+    Xml::Element map, const std::experimental::filesystem::path& tsx_base)
 {
-    return {read_version(map), read_orientation(map), read_render_order(map),
-            read_isize(map),   read_tile_size(map),   read_background(map),
-            read_next_id(map), read_properties(map),  read_tile_sets(map),
-            read_layers(map)};
+    return {
+        read_version(map), read_orientation(map), read_render_order(map),
+        read_isize(map),   read_tile_size(map),   read_background(map),
+        read_next_id(map), read_properties(map),  read_tile_sets(map, tsx_base),
+        read_layers(map)};
 }
 
 } // namespace map
@@ -706,21 +712,23 @@ using map::read_map;
 } // namespace
 } // namespace impl
 
-Map read_tmx(gsl::not_null<gsl::czstring<>> path)
+Map read_tmx(const std::experimental::filesystem::path& path)
 {
-    const impl::Xml tmx{path};
+    const impl::Xml tmx{path.string().c_str()};
 
     auto map{tmx.root()};
 
     if (map.name() == impl::tmx_info::map)
-        return impl::read_map(map);
+        return impl::read_map(map, path.parent_path());
 
     throw impl::Invalid_element{map.name()};
 }
 
-Map::Tile_set read_tsx(Global_tile_id first_id, File tsx)
+Map::Tile_set read_tsx(
+    Global_tile_id first_id, File tsx,
+    const std::experimental::filesystem::path& base)
 {
-    const impl::Xml xml{tsx.string().c_str()};
+    const impl::Xml xml{absolute(tsx, base).string().c_str()};
 
     auto tile_set{xml.root()};
 
@@ -732,9 +740,11 @@ Map::Tile_set read_tsx(Global_tile_id first_id, File tsx)
     return impl::read_image_collection(tile_set, first_id, std::move(tsx));
 }
 
-Tile_set read_tile_set(Global_tile_id first_id, File tsx)
+Tile_set read_tile_set(
+    Global_tile_id first_id, File tsx,
+    const std::experimental::filesystem::path& base)
 {
-    const impl::Xml xml{tsx.string().c_str()};
+    const impl::Xml xml{absolute(tsx, base).string().c_str()};
 
     auto tile_set{xml.root()};
 
@@ -744,9 +754,11 @@ Tile_set read_tile_set(Global_tile_id first_id, File tsx)
     throw impl::Invalid_element{tile_set.name()};
 }
 
-Image_collection read_image_collection(Global_tile_id first_id, File tsx)
+Image_collection read_image_collection(
+    Global_tile_id first_id, File tsx,
+    const std::experimental::filesystem::path& base)
 {
-    const impl::Xml xml{tsx.string().c_str()};
+    const impl::Xml xml{absolute(tsx, base).string().c_str()};
 
     auto image_collection{xml.root()};
 

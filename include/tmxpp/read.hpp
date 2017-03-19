@@ -1,8 +1,7 @@
 #ifndef TMXPP_READ_HPP
 #define TMXPP_READ_HPP
 
-#include <gsl/gsl>
-#include <gsl/string_span>
+#include <experimental/filesystem>
 #include <tmxpp/File.hpp>
 #include <tmxpp/Image_collection.hpp>
 #include <tmxpp/Map.hpp>
@@ -11,11 +10,20 @@
 
 namespace tmxpp {
 
-Map read_tmx(gsl::not_null<gsl::czstring<>> path);
+Map read_tmx(const std::experimental::filesystem::path&);
 
-Map::Tile_set read_tsx(Global_tile_id first_id, File tsx);
-Tile_set read_tile_set(Global_tile_id first_id, File tsx);
-Image_collection read_image_collection(Global_tile_id first_id, File tsx);
+Map::Tile_set read_tsx(
+    Global_tile_id first_id, File tsx,
+    const std::experimental::filesystem::path& base =
+        std::experimental::filesystem::current_path());
+Tile_set read_tile_set(
+    Global_tile_id first_id, File tsx,
+    const std::experimental::filesystem::path& base =
+        std::experimental::filesystem::current_path());
+Image_collection read_image_collection(
+    Global_tile_id first_id, File tsx,
+    const std::experimental::filesystem::path& base =
+        std::experimental::filesystem::current_path());
 
 } // namespace tmxpp
 

@@ -15,23 +15,23 @@ target_include_directories(tmxpp PUBLIC
 include(find_dependencies.cmake)
 target_link_libraries(tmxpp
     PUBLIC
-    #   GSL
         $<$<BOOL:${Boost.Hana_FOUND}>:hana>
         $<$<NOT:$<BOOL:${Boost.Hana_FOUND}>>:Boost::boost>
         jegp
     PRIVATE
+    #   GSL
     #   Range-v3
         RapidXml)
 
-if (NOT 3.8.0 VERSION_GREATER CMAKE_VERSION)
+if(NOT 3.8.0 VERSION_GREATER CMAKE_VERSION)
     target_compile_features(tmxpp PUBLIC cxx_std_17)
 else()
     target_compile_options(tmxpp PUBLIC -std=c++1z)
 endif()
 
-if (CMAKE_CXX_COMPILER_ID MATCHES GNU)
-    target_link_libraries(tmxpp INTERFACE stdc++fs)
-endif()
+target_link_libraries(tmxpp INTERFACE
+    $<$<CXX_COMPILER_ID:GNU>:stdc++fs>
+    $<$<CXX_COMPILER_ID:Clang>:c++experimental>)
 
 install(TARGETS tmxpp EXPORT tmxppTargets
     ARCHIVE DESTINATION lib

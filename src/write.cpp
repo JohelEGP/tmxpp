@@ -151,7 +151,9 @@ write(const Tiles& ts, Xml::Element tset)
 enum class Tile_set_type : unsigned char { unknown, tsx };
 
 template <class Tset>
-void map_tile_set_visitor(const Tset& ts, Xml::Element elem, Tile_set_type type)
+void map_tile_set_visitor(
+    const Tset& ts, Xml::Element elem, Tile_set_type type,
+    const std::experimental::filesystem::path& tsx_base = {})
 {
     if (type != Tile_set_type::tsx) {
         add(elem, tile_set_first_id, ts.first_id);
@@ -159,7 +161,7 @@ void map_tile_set_visitor(const Tset& ts, Xml::Element elem, Tile_set_type type)
     }
 
     if (bool is_external{type == Tile_set_type::unknown && !ts.tsx.empty()})
-        return tmxpp::write(ts);
+        return tmxpp::write(ts, tsx_base);
 
     add(elem, tile_set_name, ts.name);
     // clang-format off
@@ -183,20 +185,23 @@ void map_tile_set_visitor(const Tset& ts, Xml::Element elem, Tile_set_type type)
     write(ts.tiles, elem);
 }
 
-void write(const Tile_set& ts, Xml::Element elem, Tile_set_type type)
+template <class Tile_set_>
+std::enable_if_t<
+    std::is_same_v<Tile_set_, Tile_set> ||
+    std::is_same_v<Tile_set_, Image_collection>>
+write(const Tile_set_& ts, Xml::Element elem, Tile_set_type type)
 {
     map_tile_set_visitor(ts, elem, type);
 }
 
-void write(const Image_collection& col, Xml::Element elem, Tile_set_type type)
-{
-    map_tile_set_visitor(col, elem, type);
-}
-
-void write(const Map::Tile_set& ts, Xml::Element elem, Tile_set_type type)
+void write(
+    const Map::Tile_set& ts, Xml::Element elem, Tile_set_type type,
+    const std::experimental::filesystem::path& tsx_base = {})
 {
     std::visit(
-        [elem, type](const auto& ts) { map_tile_set_visitor(ts, elem, type); },
+        [elem, type, &tsx_base](const auto& ts) {
+            map_tile_set_visitor(ts, elem, type, tsx_base);
+        },
         ts);
 }
 
@@ -438,10 +443,12 @@ void write(
         orient);
 }
 
-void write(const Map::Tile_sets& tses, Xml::Element map)
+void write(
+    const Map::Tile_sets& tses, Xml::Element map,
+    const std::experimental::filesystem::path& tsx_base)
 {
     for (const auto& ts : tses)
-        write(ts, map.add(tile_set), Tile_set_type::unknown);
+        write(ts, map.add(tile_set), Tile_set_type::unknown, tsx_base);
 }
 
 void write(const Map::Layers& ls, Xml::Element map)
@@ -450,7 +457,9 @@ void write(const Map::Layers& ls, Xml::Element map)
         write(l, map);
 }
 
-void write(const Map& map, Xml::Element elem)
+void write(
+    const Map& map, Xml::Element elem,
+    const std::experimental::filesystem::path& tsx_base)
 {
     add(elem, map_version, map.version);
     write(map.orientation, map.render_order, elem);
@@ -459,27 +468,27 @@ void write(const Map& map, Xml::Element elem)
     add(elem, map_background, map.background);
     add(elem, map_next_id, map.next_id);
     write(map.properties, elem);
-    write(map.tile_sets, elem);
+    write(map.tile_sets, elem, tsx_base);
     write(map.layers, elem);
 }
 
-void write(const Xml& xml, gsl::not_null<gsl::czstring<>> path)
+void write(const Xml& xml, const std::experimental::filesystem::path& out)
 {
-    std::ofstream ofs{path};
+    std::ofstream ofs{out};
 
     if (!ofs)
-        throw Exception{"Output path presented problems."};
+        throw Exception{"Output path " + out.string() + " presented problems."};
 
     ofs << xml;
 }
 
 } // namespace impl
 
-void write(const Map& map, gsl::not_null<gsl::czstring<>> path)
+void write(const Map& map, const std::experimental::filesystem::path& path)
 {
     impl::Xml tmx{impl::map};
 
-    impl::write(map, tmx.root());
+    impl::write(map, tmx.root(), path.parent_path());
 
     write(tmx, path);
 }
@@ -489,7 +498,7 @@ std::enable_if_t<
     std::is_same_v<Tile_set_, Map::Tile_set> ||
     std::is_same_v<Tile_set_, Tile_set> ||
     std::is_same_v<Tile_set_, Image_collection>>
-write(const Tile_set_& ts)
+write(const Tile_set_& ts, const std::experimental::filesystem::path& base)
 {
     if (ts.tsx.empty())
         throw Exception{
@@ -499,7 +508,7 @@ write(const Tile_set_& ts)
 
     impl::write(ts, tsx.root(), impl::Tile_set_type::tsx);
 
-    write(tsx, ts.tsx.string().c_str());
+    write(tsx, absolute(ts.tsx, base));
 }
 
 } // namespace tmxpp
