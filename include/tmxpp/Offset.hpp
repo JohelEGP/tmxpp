@@ -6,10 +6,8 @@
 namespace tmxpp {
 
 struct Offset {
-    using Coordinate = Pixel;
-
-    Coordinate x;
-    Coordinate y;
+    Pixel x;
+    Pixel y;
 };
 
 constexpr bool operator==(Offset l, Offset r) noexcept

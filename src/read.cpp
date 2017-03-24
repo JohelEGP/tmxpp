@@ -208,9 +208,8 @@ Offset read_tile_offset(Xml::Element tile_set)
     if (!tile_offset)
         return {};
 
-    return {
-        from_string<Offset::Coordinate>(value(*tile_offset, tile_offset_x)),
-        from_string<Offset::Coordinate>(value(*tile_offset, tile_offset_y))};
+    return {from_string<Pixel>(value(*tile_offset, tile_offset_x)),
+            from_string<Pixel>(value(*tile_offset, tile_offset_y))};
 }
 
 Local_tile_id read_tile_id(Xml::Element tile)
@@ -419,8 +418,8 @@ Offset read_offset(Xml::Element layer)
     auto x{optional_value(layer, offset_x)};
     auto y{optional_value(layer, offset_y)};
 
-    return {x ? from_string<Offset::Coordinate>(*x) : Offset::Coordinate{0},
-            y ? from_string<Offset::Coordinate>(*y) : Offset::Coordinate{0}};
+    return {x ? from_string<Pixel>(*x) : Pixel{0},
+            y ? from_string<Pixel>(*y) : Pixel{0}};
 }
 
 Layer read_layer(Xml::Element layer)
