@@ -711,8 +711,7 @@ using map::read_map;
 } // namespace
 } // namespace impl
 
-Map read_tmx(const std::experimental::filesystem::path& path)
-{
+Map read_tmx(const std::experimental::filesystem::path& path) try {
     const impl::Xml tmx{path.string().c_str()};
 
     auto map{tmx.root()};
@@ -722,11 +721,13 @@ Map read_tmx(const std::experimental::filesystem::path& path)
 
     throw impl::Invalid_element{map.name()};
 }
+catch (const Invalid_argument& e) {
+    throw Exception{e.what()};
+}
 
 Map::Tile_set read_tsx(
     Global_tile_id first_id, File tsx,
-    const std::experimental::filesystem::path& base)
-{
+    const std::experimental::filesystem::path& base) try {
     const impl::Xml xml{absolute(tsx, base).string().c_str()};
 
     auto tile_set{xml.root()};
@@ -738,11 +739,13 @@ Map::Tile_set read_tsx(
         return impl::read_tile_set(tile_set, first_id, std::move(tsx));
     return impl::read_image_collection(tile_set, first_id, std::move(tsx));
 }
+catch (const Invalid_argument& e) {
+    throw Exception{e.what()};
+}
 
 Tile_set read_tile_set(
     Global_tile_id first_id, File tsx,
-    const std::experimental::filesystem::path& base)
-{
+    const std::experimental::filesystem::path& base) try {
     const impl::Xml xml{absolute(tsx, base).string().c_str()};
 
     auto tile_set{xml.root()};
@@ -752,11 +755,13 @@ Tile_set read_tile_set(
 
     throw impl::Invalid_element{tile_set.name()};
 }
+catch (const Invalid_argument& e) {
+    throw Exception{e.what()};
+}
 
 Image_collection read_image_collection(
     Global_tile_id first_id, File tsx,
-    const std::experimental::filesystem::path& base)
-{
+    const std::experimental::filesystem::path& base) try {
     const impl::Xml xml{absolute(tsx, base).string().c_str()};
 
     auto image_collection{xml.root()};
@@ -766,6 +771,9 @@ Image_collection read_image_collection(
             image_collection, first_id, std::move(tsx));
 
     throw impl::Invalid_element{image_collection.name()};
+}
+catch (const Invalid_argument& e) {
+    throw Exception{e.what()};
 }
 
 } // namespace tmxpp
