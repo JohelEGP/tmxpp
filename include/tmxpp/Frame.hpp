@@ -8,7 +8,8 @@
 namespace tmxpp {
 
 struct Frame {
-    using Duration = std::chrono::milliseconds;
+    using Duration =
+        std::chrono::duration<int, std::chrono::milliseconds::period>;
 
     Local_tile_id id;
     Non_negative<Duration> duration;
