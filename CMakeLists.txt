@@ -12,7 +12,7 @@ target_include_directories(tmxpp PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
 
-include(find_dependencies.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/find_dependencies.cmake)
 target_link_libraries(tmxpp
     PUBLIC
         Boost::boost
@@ -40,12 +40,8 @@ install(DIRECTORY include/
     DESTINATION include
     REGEX /impl EXCLUDE)
 
-set(cmake_files tmxppConfig.cmake find_dependencies.cmake)
-
 export(EXPORT tmxppTargets)
-foreach(cfile IN LISTS cmake_files)
-    configure_file(${cfile} ${cfile} COPYONLY)
-endforeach()
+file(COPY cmake/ DESTINATION .)
 
-install(EXPORT tmxppTargets  DESTINATION lib/cmake/tmxpp)
-install(FILES ${cmake_files} DESTINATION lib/cmake/tmxpp)
+install(EXPORT tmxppTargets DESTINATION lib/cmake/tmxpp)
+install(DIRECTORY cmake/    DESTINATION lib/cmake/tmxpp)
