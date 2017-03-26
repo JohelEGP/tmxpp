@@ -15,8 +15,8 @@ target_include_directories(tmxpp PUBLIC
 include(find_dependencies.cmake)
 target_link_libraries(tmxpp
     PUBLIC
-        $<$<BOOL:${Boost.Hana_FOUND}>:hana>
-        $<$<NOT:$<BOOL:${Boost.Hana_FOUND}>>:Boost::boost>
+        Boost::boost
+        type_safe
         jegp
     PRIVATE
     #   GSL
