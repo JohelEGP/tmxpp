@@ -9,6 +9,7 @@
     + [GSL](https://github.com/Microsoft/GSL)
     + [Boost.Hana](https://github.com/boostorg/hana)
     + [Range-v3](https://github.com/ericniebler/range-v3)
+    + [type_safe](https://github.com/foonathan/type_safe)
     + [jegp](https://github.com/johelegp/jegp)
     + [johelegp/RapidXml](https://github.com/johelegp/RapidXml)
 - [CMake](https://cmake.org/) to build TMX++
