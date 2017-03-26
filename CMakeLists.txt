@@ -36,7 +36,9 @@ target_link_libraries(tmxpp INTERFACE
 install(TARGETS tmxpp EXPORT tmxppTargets
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib)
-install(DIRECTORY include/ DESTINATION include)
+install(DIRECTORY include/
+    DESTINATION include
+    REGEX /impl EXCLUDE)
 
 set(cmake_files tmxppConfig.cmake find_dependencies.cmake)
 
