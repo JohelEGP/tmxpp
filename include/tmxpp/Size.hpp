@@ -6,9 +6,9 @@
 
 namespace tmxpp {
 
-template <class Number>
+template <class T>
 struct Size {
-    using Dimension = Positive<Number>;
+    using Dimension = Positive<T>;
 
     Dimension w;
     Dimension h;
@@ -17,14 +17,14 @@ struct Size {
 using pxSize = Size<Pixel>;
 using iSize  = Size<int>;
 
-template <class N>
-inline bool operator==(Size<N> l, Size<N> r) noexcept
+template <class T>
+inline bool operator==(Size<T> l, Size<T> r) noexcept
 {
     return l.w == r.w && l.h == r.h;
 }
 
-template <class N>
-inline bool operator!=(Size<N> l, Size<N> r) noexcept
+template <class T>
+inline bool operator!=(Size<T> l, Size<T> r) noexcept
 {
     return !(l == r);
 }
