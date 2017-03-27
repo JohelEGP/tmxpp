@@ -8,10 +8,10 @@
 
 namespace tmxpp {
 
-using Local_tile_id = Closed_range<
+using Local_tile_id = Closed_interval<
     std::int_least32_t, boost::hana::long_<0>, boost::hana::long_<0x1FFF'FFFE>>;
 
-using Global_tile_id = Closed_range<
+using Global_tile_id = Closed_interval<
     std::int_least32_t, boost::hana::long_<1>, boost::hana::long_<0x1FFF'FFFF>>;
 
 struct Flipped_tile_id {

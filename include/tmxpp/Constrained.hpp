@@ -25,7 +25,7 @@ template <class T>
 using Non_empty = Constrained<T, type_safe::constraints::non_empty>;
 
 template <class T, class LowerConstant, class UpperConstant>
-using Closed_range = Constrained<
+using Closed_interval = Constrained<
     T, type_safe::constraints::closed_interval<
            jegp::Value_type<LowerConstant>, LowerConstant, UpperConstant>>;
 
