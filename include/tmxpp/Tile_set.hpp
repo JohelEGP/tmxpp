@@ -10,7 +10,7 @@
 #include <tmxpp/Image.hpp>
 #include <tmxpp/Object_layer.hpp>
 #include <tmxpp/Offset.hpp>
-#include <tmxpp/Pixel.hpp>
+#include <tmxpp/Pixels.hpp>
 #include <tmxpp/Properties.hpp>
 #include <tmxpp/Size.hpp>
 #include <tmxpp/Tile_id.hpp>
@@ -31,8 +31,8 @@ struct Tile_set {
     File tsx;
     std::string name;
     pxSize tile_size;
-    Non_negative<Pixel> spacing;
-    Non_negative<Pixel> margin;
+    Non_negative<Pixels> spacing;
+    Non_negative<Pixels> margin;
     iSize size; // In tiles.
     Offset tile_offset;
     Properties properties;

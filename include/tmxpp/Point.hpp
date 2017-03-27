@@ -1,12 +1,12 @@
 #ifndef TMXPP_POINT_HPP
 #define TMXPP_POINT_HPP
 
-#include <tmxpp/Pixel.hpp>
+#include <tmxpp/Pixels.hpp>
 
 namespace tmxpp {
 
 struct Point {
-    using Coordinate = Pixel;
+    using Coordinate = Pixels;
 
     Coordinate x;
     Coordinate y;

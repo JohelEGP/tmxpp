@@ -208,8 +208,8 @@ Offset read_tile_offset(Xml::Element tile_set)
     if (!tile_offset)
         return {};
 
-    return {from_string<Pixel>(value(*tile_offset, tile_offset_x)),
-            from_string<Pixel>(value(*tile_offset, tile_offset_y))};
+    return {from_string<Pixels>(value(*tile_offset, tile_offset_x)),
+            from_string<Pixels>(value(*tile_offset, tile_offset_y))};
 }
 
 Local_tile_id read_tile_id(Xml::Element tile)
@@ -226,17 +226,18 @@ std::optional<Object_layer> read_tile_collision_shape(Xml::Element tile)
 
 namespace tile_set {
 
-Non_negative<Pixel> read_spacing(Xml::Element tile_set)
+Non_negative<Pixels> read_spacing(Xml::Element tile_set)
 {
     auto spacing{optional_value(tile_set, tile_set_spacing)};
-    return Non_negative<Pixel>{spacing ? from_string<Pixel>(*spacing)
-                                       : Pixel{}};
+    return Non_negative<Pixels>{spacing ? from_string<Pixels>(*spacing)
+                                        : Pixels{}};
 }
 
-Non_negative<Pixel> read_margin(Xml::Element tile_set)
+Non_negative<Pixels> read_margin(Xml::Element tile_set)
 {
     auto margin{optional_value(tile_set, tile_set_margin)};
-    return Non_negative<Pixel>{margin ? from_string<Pixel>(*margin) : Pixel{}};
+    return Non_negative<Pixels>{margin ? from_string<Pixels>(*margin)
+                                       : Pixels{}};
 }
 
 iSize read_size(Xml::Element tile_set)
@@ -418,8 +419,8 @@ Offset read_offset(Xml::Element layer)
     auto x{optional_value(layer, offset_x)};
     auto y{optional_value(layer, offset_y)};
 
-    return {x ? from_string<Pixel>(*x) : Pixel{0},
-            y ? from_string<Pixel>(*y) : Pixel{0}};
+    return {x ? from_string<Pixels>(*x) : Pixels{0},
+            y ? from_string<Pixels>(*y) : Pixels{0}};
 }
 
 Layer read_layer(Xml::Element layer)
@@ -612,9 +613,9 @@ Map::Staggered::Index read_index(Xml::Element map)
     throw Invalid_attribute{map_staggered_index, index};
 }
 
-Pixel read_side_length(Xml::Element map)
+Pixels read_side_length(Xml::Element map)
 {
-    return from_string<Pixel>(value(map, map_hexagonal_side_legth));
+    return from_string<Pixels>(value(map, map_hexagonal_side_legth));
 }
 
 Map::Orientation read_orientation(Xml::Element map)

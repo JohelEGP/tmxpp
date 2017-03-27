@@ -2,7 +2,7 @@
 #define TMXPP_SIZE_HPP
 
 #include <tmxpp/Constrained.hpp>
-#include <tmxpp/Pixel.hpp>
+#include <tmxpp/Pixels.hpp>
 
 namespace tmxpp {
 
@@ -14,7 +14,7 @@ struct Size {
     Dimension h;
 };
 
-using pxSize = Size<Pixel>;
+using pxSize = Size<Pixels>;
 using iSize  = Size<int>;
 
 template <class T>

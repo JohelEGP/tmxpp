@@ -9,7 +9,7 @@
 #include <tmxpp/Image_collection.hpp>
 #include <tmxpp/Image_layer.hpp>
 #include <tmxpp/Object_layer.hpp>
-#include <tmxpp/Pixel.hpp>
+#include <tmxpp/Pixels.hpp>
 #include <tmxpp/Properties.hpp>
 #include <tmxpp/Size.hpp>
 #include <tmxpp/Tile_layer.hpp>
@@ -30,7 +30,7 @@ struct Map {
         Index index;
     };
     struct Hexagonal : Staggered {
-        Pixel side_length;
+        Pixels side_length;
     };
 
     using Orientation =
