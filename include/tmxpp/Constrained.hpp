@@ -11,7 +11,7 @@ namespace tmxpp {
 
 struct Verifier {
     template <class T, class Predicate>
-    static void verify(const T& value, Predicate pred)
+    static void verify(const T& value, const Predicate& pred)
     {
         if (!pred(value))
             throw Invalid_argument{"Invalid value to Constrained."};
