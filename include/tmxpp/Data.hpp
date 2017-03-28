@@ -14,8 +14,6 @@ struct Data {
 
     class Format {
     public:
-        /// \throws `Invalid_argument` if
-        ///         `e==Encoding::csv && c!=Compression::none`.
         [[implicit]] constexpr Format(
             Encoding e, Compression c = Compression::none)
           : encoding_{e}, compression_{c}
@@ -27,8 +25,6 @@ struct Data {
         {
             return encoding_;
         }
-        /// \postconditions If `e==Encoding::csv` then
-        ///                 `compression()==Compression::none`.
         constexpr void encoding(Encoding e) noexcept
         {
             encoding_ = e;
@@ -40,9 +36,6 @@ struct Data {
         {
             return compression_;
         }
-        /// \throws `Invalid_argument` if
-        ///         `encoding()==Encoding::csv && c!=Compression::none`.
-        /// \remarks If an exception is thrown there are no effects.
         constexpr void compression(Compression c)
         {
             check_invariant(encoding_, c);

@@ -8,7 +8,7 @@
 namespace tmxpp {
 
 struct Tile_layer : Layer {
-    iSize size; // In tiles.
+    iSize size;
     Data data;
 };
 

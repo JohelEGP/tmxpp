@@ -33,7 +33,7 @@ struct Tile_set {
     pxSize tile_size;
     Non_negative<Pixels> spacing;
     Non_negative<Pixels> margin;
-    iSize size; // In tiles.
+    iSize size;
     Offset tile_offset;
     Properties properties;
     Image image;

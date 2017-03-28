@@ -52,7 +52,7 @@ struct Map {
     std::string version;
     Orientation orientation;
     Render_order render_order;
-    iSize size; // In tiles.
+    iSize size;
     pxSize general_tile_size;
     std::optional<Color> background;
     Unique_id next_id;
