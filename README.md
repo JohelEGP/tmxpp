@@ -28,4 +28,4 @@ After building, you can `#include <tmxpp.hpp>` and link with `tmxpp` to `read()`
 
 ## Documentation
 
-Coming soon.
+See [doc/tmxpp.md](doc/tmxpp.md).
