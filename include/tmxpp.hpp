@@ -16,7 +16,7 @@
 #include <tmxpp/Object.hpp>
 #include <tmxpp/Object_layer.hpp>
 #include <tmxpp/Offset.hpp>
-#include <tmxpp/Pixel.hpp>
+#include <tmxpp/Pixels.hpp>
 #include <tmxpp/Point.hpp>
 #include <tmxpp/Properties.hpp>
 #include <tmxpp/Property.hpp>
